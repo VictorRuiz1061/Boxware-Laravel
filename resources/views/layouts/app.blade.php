@@ -55,6 +55,7 @@
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0px)' },
                         }
+                        
                     },
                     backdropBlur: {
                         xs: '2px',
@@ -397,7 +398,7 @@
                             </div>
                             Municipios
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                        <a href="{{ url('/areas') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
                             <div class="w-8 h-8 bg-gradient-to-r from-purple-400 to-violet-400 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-map text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
@@ -438,13 +439,13 @@
                          x-transition:enter-start="opacity-0 transform -translate-y-4"
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="ml-6 mt-3 space-y-2">
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                        <a href="{{ url('/fichas') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
                             <div class="w-8 h-8 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-file-alt text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Fichas
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                        <a href="{{ url('/programas') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
                             <div class="w-8 h-8 bg-gradient-to-r from-lime-400 to-green-400 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-book text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>

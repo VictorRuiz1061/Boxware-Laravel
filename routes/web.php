@@ -6,6 +6,9 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\ModuloController;
+use App\Http\Controllers\FichaController;
+use App\Http\Controllers\ProgramaController;
+use App\Http\Controllers\AreaController;
 
 // Ruta principal redirige al login
 Route::get('/', function () {
@@ -38,3 +41,9 @@ Route::resource('movimientos', App\Http\Controllers\MovimientoController::class)
 Route::resource('tipos_sitio', App\Http\Controllers\TipoSitioController::class)->except(['show']);
 // Categorías de Elemento
 Route::resource('categorias_elementos', App\Http\Controllers\ElementoController::class)->except(['show']);
+// Programas
+Route::resource('programas', ProgramaController::class)->except(['show']);
+// Fichas
+Route::resource('fichas', FichaController::class)->except(['show']);
+// Areas
+Route::resource('areas', App\Http\Controllers\AreaController::class)->except(['show']);

@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Programa;
-use Illuminate\Http\Request;
-use App\Http\Middleware\IsUserAuth;
+use Illuminate\Http\Request\ProgramaRequest;
+use App\Models\Area;
+use App\Models\Sede;
 
 class ProgramaController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(IsUserAuth::class);
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -20,12 +16,9 @@ class ProgramaController extends Controller
     {
         try {
             $programas = Programa::with('area.sede')->get();
-            return response()->json($programas);
+            return view('programas.index', compact('programas'));
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los programas',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al obtener los programas: ' . $e->getMessage());
         }
     }
 
@@ -34,9 +27,14 @@ class ProgramaController extends Controller
      */
     public function create()
     {
-        //
+        try {
+            $areas = Area::all();
+            $programas = Programa::all();
+            return view('programas.create', compact('areas', 'programas'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al obtener datos para crear ficha: ' . $e->getMessage());
+        }
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -103,7 +101,15 @@ class ProgramaController extends Controller
      */
     public function edit(Programa $programa)
     {
-        //
+        try {
+            $programa->load('area.sede');
+            return response()->json($programa);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Programa no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 
     /**

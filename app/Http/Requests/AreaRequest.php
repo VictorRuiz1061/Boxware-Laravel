@@ -18,7 +18,7 @@ class AreaRequest extends FormRequest
             'estado' => 'required|boolean',
             'fecha_creacion' => 'sometimes|date',
             'fecha_modificacion' => 'sometimes|date|nullable',
-            'sede_id' => 'required|exists:sedes,id_sede',
+            'id_sede' => 'required|exists:sedes,id_sede',
         ];
     }
 } 

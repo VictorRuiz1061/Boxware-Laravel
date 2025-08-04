@@ -8,8 +8,8 @@
     <form method="POST" action="#">
         @csrf
         <div class="mb-4">
-            <label class="block text-gray-700 font-semibold mb-2">Nombre</label>
-            <input type="text" name="nombre" class="w-full border rounded-lg px-4 py-2 focus:ring-primary-500 focus:border-primary-500" required>
+            <label class="block text-gray-700 font-semibold mb-2">nombre_programa</label>
+            <input type="text" name="nombre_programa" class="w-full border rounded-lg px-4 py-2 focus:ring-primary-500 focus:border-primary-500" required>
         </div>
         <div class="mb-4">
             <label class="block text-gray-700 font-semibold mb-2">Estado</label>
@@ -25,8 +25,7 @@
                     <option value="1">Sí</option>
                     <option value="0">No</option>
                 </select>
-            </div>
-            <div>
+
                 <label class="block text-gray-700 font-semibold mb-2">Puede crear</label>
                 <select name="puede_crear" class="w-full border rounded-lg px-4 py-2 focus:ring-primary-500 focus:border-primary-500">
                     <option value="1">Sí</option>

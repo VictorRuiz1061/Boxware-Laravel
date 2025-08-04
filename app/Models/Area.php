@@ -14,12 +14,12 @@ class Area extends Model
         'estado',
         'fecha_creacion',
         'fecha_modificacion',
-        'sede_id',
+        'id_sede', // <--- CORRECTO
     ];
-
+    
     public function sede()
     {
-        return $this->belongsTo(Sede::class, 'sede_id', 'id_sede');
+        return $this->belongsTo(Sede::class, 'id_sede', 'id_sede');
     }
 
     public function programas()
