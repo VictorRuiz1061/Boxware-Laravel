@@ -14,13 +14,13 @@ class UsuarioAdminSeeder extends Seeder
         $rol = Rol::where('nombre_rol', env('SEED_ROLE_ADMIN', 'Super Administrador'))->first();
 
         Usuario::updateOrInsert(
-            ['email' => 'admin@admin.com'],
+            ['email' => env('ADMIN_EMAIL')],
             [
                 'nombre' => 'admin',
                 'apellido' => 'Admin',
                 'edad' => 25,
                 'cedula' => '000000000',
-                'password' => Hash::make('admin'),
+                'password' => Hash::make(env('ADMIN_PASSWORD')),
                 'telefono' => '00000000',
                 'rol_id' => $rol->id_rol ?? 1,
                 'estado' => true,

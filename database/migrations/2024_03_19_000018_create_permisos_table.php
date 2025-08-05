@@ -15,8 +15,9 @@ return new class extends Migration
             $table->boolean('puede_ver');
             $table->boolean('puede_crear');
             $table->boolean('puede_editar');
+            $table->boolean('puede_eliminar');
             $table->timestamp('fecha_creacion');
-            $table->foreignId('modulo_id')->constrained('modulos', 'id_modulo');
+            $table->json('modulo_ids')->nullable();
             $table->foreignId('rol_id')->constrained('roles', 'id_rol');
         });
     }
