@@ -4,37 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Http\Requests\AreaRequest;
-use App\Http\Middleware\IsUserAuth;
+use App\Models\Sede;
 
 class AreaController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(IsUserAuth::class);
-    }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        try {
-            $areas = Area::with('sede')->get();
-            return response()->json($areas);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener las áreas',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+      $areas = \App\Models\Area::all();
+      return view('areas.index', compact('areas'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+      $sedes = Sede::all();
+      return view('areas.create', compact('sedes'));
+    }
+      /**
+     * Show the form for editing the specified resource.
+     */
+
+    public function edit($id)
+    {
+      $area = \App\Models\Area::findOrFail($id);
+      return view('areas.edit', compact('area'));
     }
 
     /**
@@ -63,10 +61,7 @@ class AreaController extends Controller
             $area->load('sede');
             
             // Devolver mensaje de éxito junto con los datos del área
-            return response()->json([
-                'message' => 'Área creada exitosamente',
-                'area' => $area
-            ], 201);
+            return redirect()->route('areas.index')->with('success', 'Área creada exitosamente');
         } catch (\Exception $e) {
             // Devolver error con detalles
             return response()->json([
@@ -93,22 +88,22 @@ class AreaController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Area $area)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(AreaRequest $request, $id)
     {
         try {
             // Buscar el área por ID
-            $area = Area::findOrFail($id);
-            
+            $area = \App\Models\Area::findOrFail($id);
+            $area->validate(
+                [
+                    'nombre_area' => 'required|string|max:255',
+                    'estado' => 'required|boolean',
+                    'fecha_creacion' => 'required|date',
+                    'fecha_modificacion' => 'required|date',
+                    'sede_id' => 'required|exists:sedes,id_sede',
+                ]
+            );
             // Los datos ya están validados por AreaRequest
             // Preparar los datos del área
             $datos = $request->validated();
@@ -165,3 +160,6 @@ class AreaController extends Controller
         }
     }
 }
+
+
+

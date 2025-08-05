@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
     <h2 class="text-2xl font-bold mb-6">Crear Permiso</h2>
-    <form method="POST" action="#">
+    <form method="POST" action="{{ route('permisos.store') }}">
         @csrf
         <div class="mb-4">
             <label class="block text-gray-700 font-semibold mb-2">Nombre</label>
@@ -65,4 +65,4 @@
         </div>
     </form>
 </div>
-@endsection 
+@endsection

@@ -4,120 +4,71 @@ namespace App\Http\Controllers;
 
 use App\Models\Municipio;
 use App\Http\Requests\MunicipioRequest;
-use App\Http\Middleware\IsUserAuth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class MunicipioController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(IsUserAuth::class);
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return Municipio::all();
+        $municipios = \App\Models\Municipio::all();
+        return view('municipio.index', compact('municipios'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('municipio.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function edit($id)
+    {
+        $municipio = \App\Models\Municipio::findOrFail($id);
+        return view('municipio.edit', compact('municipio'));
+    }
+ 
     public function store(MunicipioRequest $request)
     {
-        try {
-            // Los datos ya están validados por MunicipioRequest
-            // Preparar los datos del municipio
-            $datos = $request->validated();
-            
-            // Asignar fechas si no están presentes
-            if (!isset($datos['fecha_creacion'])) {
-                $datos['fecha_creacion'] = now();
-            }
-            
-            if (!isset($datos['fecha_modificacion'])) {
-                $datos['fecha_modificacion'] = now();
-            }
-            
-            // Crear el municipio
-            $municipio = Municipio::create($datos);
-            
-            // Devolver mensaje de éxito junto con los datos del municipio
-            return response()->json([
-                'message' => 'Municipio creado exitosamente',
-                'municipio' => $municipio
-            ], 201);
-        } catch (\Exception $e) {
-            // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al crear el municipio',
-                'error' => $e->getMessage()
-            ], 500);
+        $validated = $request->validated([
+            'nombre_municipio' => 'required',
+            'estado' => 'required',
+        ]);
+        $datos = $request->all();
+        if (!isset($datos['fecha_creacion'])) {
+            $datos['fecha_creacion'] = now();
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Municipio $municipio)
-    {
-        return $municipio;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Municipio $municipio)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(MunicipioRequest $request, $id)
-    {
-        try {
-            // Buscar el municipio por ID
-            $municipio = Municipio::findOrFail($id);
-            
-            // Los datos ya están validados por MunicipioRequest
-            // Preparar los datos del municipio
-            $datos = $request->validated();
-            
-            // Actualizar la fecha de modificación
+        if (!isset($datos['fecha_modificacion'])) {
             $datos['fecha_modificacion'] = now();
-            
-            // Actualizar el municipio
-            $municipio->update($datos);
-            
-            // Devolver mensaje de éxito junto con los datos actualizados
+        }
+        $municipio = \App\Models\Municipio::create($datos);
+        return redirect()->route('municipios.index')->with('success', 'Municipio creado exitosamente');
+    }
+
+    public function show($id)
+    {
+        try{
+            $municipio = Municipio::findOrFail($id);
+            return response()->json($municipio);
+        }catch(\Exception $e){
             return response()->json([
-                'message' => 'Municipio actualizado exitosamente',
-                'municipio' => $municipio
-            ]);
-        } catch (\Exception $e) {
-            // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al actualizar el municipio',
+                'message' => 'Municipio no encontrado',
                 'error' => $e->getMessage()
-            ], 500);
+            ], 404);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function update(Request $request, $id)
+    {
+        $municipio = \App\Models\Municipio::findOrFail($id);
+        $request->validate([
+            'nombre_municipio' => 'required',
+            'estado' => 'required',
+        ]);
+        $datos = $request->all();
+        $datos['fecha_modificacion'] = now();
+        $municipio->update($datos);
+        return redirect()->route('municipios.index')->with('success', 'Municipio actualizado exitosamente');
+    }
+
     public function destroy($id)
     {
         try {

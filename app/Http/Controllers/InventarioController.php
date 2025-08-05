@@ -3,34 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventario;
+use App\Models\Sitio;
+use App\Models\Material;
 use Illuminate\Http\Request;
 use Exception;
 
 class InventarioController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('IsUserAuth');
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         try {
-            $inventario = Inventario::with('sitio')->get();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Lista de inventario obtenida correctamente',
-                'data' => $inventario
-            ]);
+            $inventarios = Inventario::with(['sitio', 'material'])->get();
+            return view('inventario.index', compact('inventarios'));
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al obtener la lista de inventario',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al obtener la lista de inventario: ' . $e->getMessage());
         }
     }
 
@@ -39,7 +28,9 @@ class InventarioController extends Controller
      */
     public function create()
     {
-        //
+        $sitios = Sitio::all();
+        $materiales = Material::all();
+        return view('inventario.create', compact('sitios', 'materiales'));
     }
 
     /**
@@ -55,19 +46,13 @@ class InventarioController extends Controller
                 'sitio_id' => 'required|exists:sitios,id_sitio',
             ]);
 
-        $inventario = Inventario::create($request->all());
+            $inventario = Inventario::create($request->all());
             
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Elemento de inventario creado correctamente',
-                'data' => $inventario
-            ], 201);
+            return redirect()->route('inventario.index')
+                ->with('success', 'Elemento de inventario creado correctamente');
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al crear el elemento de inventario',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al crear el elemento de inventario: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -80,23 +65,12 @@ class InventarioController extends Controller
             $inventario = Inventario::with('sitio')->find($id);
             
             if (!$inventario) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Elemento de inventario no encontrado'
-                ], 404);
+                return back()->with('error', 'Elemento de inventario no encontrado');
             }
             
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Elemento de inventario obtenido correctamente',
-                'data' => $inventario
-            ]);
+            return view('inventario.show', compact('inventario'));
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al obtener el elemento de inventario',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al obtener el elemento de inventario: ' . $e->getMessage());
         }
     }
 
@@ -105,7 +79,8 @@ class InventarioController extends Controller
      */
     public function edit(Inventario $inventario)
     {
-        //
+        $sitios = Sitio::all();
+        return view('inventario.edit', compact('inventario', 'sitios'));
     }
 
     /**
@@ -117,10 +92,7 @@ class InventarioController extends Controller
             $inventario = Inventario::find($id);
             
             if (!$inventario) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Elemento de inventario no encontrado'
-                ], 404);
+                return back()->with('error', 'Elemento de inventario no encontrado');
             }
             
             $request->validate([
@@ -130,19 +102,13 @@ class InventarioController extends Controller
                 'sitio_id' => 'exists:sitios,id_sitio',
             ]);
             
-        $inventario->update($request->all());
+            $inventario->update($request->all());
             
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Elemento de inventario actualizado correctamente',
-                'data' => $inventario
-            ]);
+            return redirect()->route('inventario.index')
+                ->with('success', 'Elemento de inventario actualizado correctamente');
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al actualizar el elemento de inventario',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al actualizar el elemento de inventario: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -155,24 +121,15 @@ class InventarioController extends Controller
             $inventario = Inventario::find($id);
             
             if (!$inventario) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Elemento de inventario no encontrado'
-                ], 404);
+                return back()->with('error', 'Elemento de inventario no encontrado');
             }
             
-        $inventario->delete();
+            $inventario->delete();
             
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Elemento de inventario eliminado correctamente'
-            ]);
+            return redirect()->route('inventario.index')
+                ->with('success', 'Elemento de inventario eliminado correctamente');
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al eliminar el elemento de inventario',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al eliminar el elemento de inventario: ' . $e->getMessage());
         }
     }
 }

@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
     <h2 class="text-2xl font-bold mb-6">Editar Permiso</h2>
-    <form method="POST" action="#">
+    <form method="POST" action="{{ route('permisos.update', $permiso->id_permiso) }}">
         @csrf
         @method('PUT')
         <div class="mb-4">

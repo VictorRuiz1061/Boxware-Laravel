@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('fichas', function (Blueprint $table) {
             $table->id('id_ficha');
-            $table->string('estado', 50);
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_modificacion')->useCurrentOnUpdate()->nullable();
+            $table->boolean('estado');
             $table->foreignId('usuario_id')->constrained('usuarios', 'id_usuario');
             $table->foreignId('programa_id')->constrained('programas', 'id_programa');
+            $table->timestamp('fecha_creacion')->useCurrent();
+            $table->timestamp('fecha_modificacion')->useCurrentOnUpdate()->nullable();
         });
     }
 

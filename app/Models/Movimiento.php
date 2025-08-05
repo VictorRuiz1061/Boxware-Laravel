@@ -13,12 +13,15 @@ class Movimiento extends Model
     protected $fillable = [
         'estado',
         'cantidad',
-        'fecha_creacion',
-        'fecha_modificacion',
-        'usuario_id',
+        'sitio_id',
+        'sitio_origen_id',
+        'sitio_destino_id',
+        'usuario_movimiento_id',
+        'usuario_responsable_id',
         'tipo_movimiento_id',
         'material_id',
-        'sitio_id',
+        'fecha_creacion',
+        'fecha_modificacion',
     ];
 
     public function tipoMovimiento()
@@ -26,9 +29,14 @@ class Movimiento extends Model
         return $this->belongsTo(TipoMovimiento::class, 'tipo_movimiento_id', 'id_tipo_movimiento');
     }
 
-    public function usuario()
+    public function usuarioMovimiento()
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id', 'id_usuario');
+        return $this->belongsTo(Usuario::class, 'usuario_movimiento_id', 'id_usuario');
+    }
+
+    public function usuarioResponsable()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_responsable_id', 'id_usuario');
     }
 
     public function material()
@@ -39,5 +47,15 @@ class Movimiento extends Model
     public function sitio()
     {
         return $this->belongsTo(Sitio::class, 'sitio_id', 'id_sitio');
+    }
+
+    public function sitioOrigen()
+    {
+        return $this->belongsTo(Sitio::class, 'sitio_origen_id', 'id_sitio');
+    }
+
+    public function sitioDestino()
+    {
+        return $this->belongsTo(Sitio::class, 'sitio_destino_id', 'id_sitio');
     }
 }

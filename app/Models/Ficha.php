@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Ficha extends Model
 {
     protected $primaryKey = 'id_ficha';
-    protected $fillable = [
+    public $timestamps = false; // Desactivar timestamps predeterminados
+    protected $fillable =[
+        'id_ficha',
         'estado',
         'fecha_creacion',
         'fecha_modificacion',
         'usuario_id',
-        'programa_id',
+        'programa_id', 
     ];
 
     public function usuario()

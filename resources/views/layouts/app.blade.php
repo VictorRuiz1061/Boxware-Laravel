@@ -64,10 +64,13 @@
         }
     </script>
     <style>
+        body {
+            background-color: #fff;
+        }   
         .glass-effect {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
         
         .glass-effect-dark {
@@ -88,11 +91,11 @@
         }
 
         .sidebar-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
         }
 
         .header-gradient {
-            background: linear-gradient(135deg, #2D3748 0%, #1A202C 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
         }
 
         .menu-item-hover {
@@ -121,18 +124,18 @@
         }
         
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(37, 99, 235, 0.5);
             border-radius: 3px;
         }
         
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(37, 99, 235, 0.7);
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen" x-data="{ sidebarOpen: true, mobileMenuOpen: false, submenus: { ubicaciones: false, educacion: false } }">
+<body class="bg-gradient-to-br bg-gray-900 min-h-screen" x-data="{ sidebarOpen: true, mobileMenuOpen: false, submenus: { ubicaciones: false, educacion: false } }">
     <!-- Header -->
-    <header class="header-gradient shadow-2xl border-b border-gray-700 fixed top-0 z-40 transition-all duration-500 ease-in-out"
+    <header class="header-gradient shadow-lg border-b border-blue-900 fixed top-0 z-40 transition-all duration-500 ease-in-out"
             :class="sidebarOpen ? 'left-64' : 'left-24'" 
             :style="'right: 0'">
         <div class="flex items-center justify-between px-6 py-4">
@@ -201,10 +204,10 @@
                                 <i class="fas fa-user mr-4 text-blue-500 group-hover:scale-110 transition-transform duration-200"></i>Mi Perfil
                             </a>
                             <a href="#" class="flex items-center px-6 py-3 text-sm text-gray-700 hover:bg-white hover:bg-opacity-50 transition-all duration-200 group">
-                                <i class="fas fa-cog mr-4 text-purple-500 group-hover:scale-110 transition-transform duration-200"></i>Configuración
+                                                <i class="fas fa-cog mr-4 text-blue-600 group-hover:scale-110 transition-transform duration-200"></i>Configuración
                             </a>
                             <a href="#" class="flex items-center px-6 py-3 text-sm text-gray-700 hover:bg-white hover:bg-opacity-50 transition-all duration-200 group">
-                                <i class="fas fa-question-circle mr-4 text-green-500 group-hover:scale-110 transition-transform duration-200"></i>Ayuda
+                                                <i class="fas fa-question-circle mr-4 text-blue-600 group-hover:scale-110 transition-transform duration-200"></i>Ayuda
                             </a>
                         </div>
                         <div class="border-t border-white border-opacity-10 pt-2">
@@ -219,26 +222,22 @@
     </header>
 
     <!-- Sidebar -->
-    <aside class="fixed left-0 top-0 h-full sidebar-gradient shadow-2xl transition-all duration-500 ease-in-out z-30 custom-scrollbar overflow-y-auto"
+    <aside class="fixed left-0 top-0 h-full sidebar-gradient shadow-lg transition-all duration-500 ease-in-out z-30 custom-scrollbar overflow-y-auto"
            :class="sidebarOpen ? 'w-64' : 'w-24'" 
            x-data="{ activeSubmenu: null }">
         
         <!-- Sidebar header -->
         <div class="flex items-center px-6 py-8" :class="sidebarOpen ? 'justify-start' : 'justify-center'">
             <div class="flex items-center" x-show="sidebarOpen" x-transition>
-                <div class="glass-effect rounded-2xl p-6 backdrop-blur-sm w-full">
+                <div class="rounded-2xl p-6 backdrop-blur-sm w-full">
                     <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-white to-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3 floating-icon">
-                            <i class="fas fa-cube text-blue-600 text-2xl"></i>
-                        </div>
-                        <h3 class="text-white font-bold text-2xl tracking-wide">Boxware</h3>
-                        <p class="text-blue-100 text-sm mt-1">Sistema de Gestión</p>
+                        <h1 class="text-white font-bold text-2xl tracking-wide">Boxware</h1>
                     </div>
                 </div>
             </div>
             <div x-show="!sidebarOpen" class="text-white">
-                <div class="w-10 h-10 bg-gradient-to-r from-white to-blue-100 rounded-xl flex items-center justify-center floating-icon">
-                    <i class="fas fa-cube text-blue-600 text-xl"></i>
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center floating-icon">
+                    <i class="fas fa-cube text-white text-xl"></i>
                 </div>
             </div>
         </div>
@@ -248,8 +247,8 @@
             <ul class="space-y-3">
                 <!-- Dashboard -->
                 <li>
-                    <a href="{{ url('/dashboard') }}" class="flex items-center px-4 py-4 text-white font-semibold glass-effect rounded-2xl hover:bg-white hover:bg-opacity-20 transition-all duration-300 group menu-item-hover">
-                        <div class="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
+                    <a href="{{ url('/dashboard') }}" class="flex items-center px-4 py-4 text-white font-semibold hover:bg-blue-800 hover:bg-opacity-50 rounded-2xl transition-all duration-300 group menu-item-hover">
+                        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-2' : 'mx-auto'">
                             <i class="fas fa-tachometer-alt text-white group-hover:scale-110 transition-transform duration-200"></i>
                         </div>
                         <span x-show="sidebarOpen" x-transition class="font-semibold">Inicio</span>
@@ -262,8 +261,8 @@
                 <!-- Administración -->
                 <li>
                     <button @click="activeSubmenu = activeSubmenu === 'inventory' ? null : 'inventory'" 
-                            class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-white hover:bg-opacity-10 rounded-2xl transition-all duration-300 group menu-item-hover">
-                        <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
+                            class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-blue-800 hover:bg-opacity-50 rounded-2xl transition-all duration-300 group menu-item-hover">
+                        <div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
                             <i class="fas fa-boxes text-white group-hover:scale-110 transition-transform duration-200"></i>
                         </div>
                         <span x-show="sidebarOpen" x-transition class="font-semibold flex-1 text-left">Administración</span>
@@ -279,26 +278,26 @@
                          x-transition:enter-start="opacity-0 transform -translate-y-4"
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="ml-6 mt-3 space-y-2">
-                        <a href="{{ url('/usuarios') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/usuarios') }}" class="flex items-center px-3 py-3 text-blue-100 font-medium hover:bg-blue-700 hover:bg-opacity-50 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-users text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Usuarios
                         </a>
-                        <a href="{{ url('/roles') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/roles') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-user-shield text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Roles
                         </a>
-                        <a href="{{ url('/permisos') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-pink-400 to-red-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/permisos') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-key text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Permisos
                         </a>
-                        <a href="{{ url('/modulos') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-teal-400 to-green-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/modulos') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-puzzle-piece text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Módulos
@@ -309,8 +308,8 @@
                 <!-- Inventario -->
                 <li>
                     <button @click="activeSubmenu = activeSubmenu === 'movements' ? null : 'movements'" 
-                            class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-white hover:bg-opacity-10 rounded-2xl transition-all duration-300 group menu-item-hover">
-                        <div class="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
+                            class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-blue-800 hover:bg-opacity-50 rounded-2xl transition-all duration-300 group menu-item-hover">
+                        <div class="w-10 h-10 bg-blue-800 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-2' : 'mx-auto'">
                             <i class="fas fa-exchange-alt text-white group-hover:scale-110 transition-transform duration-200"></i>
                         </div>
                         <span x-show="sidebarOpen" x-transition class="font-semibold flex-1 text-left">Inventario</span>
@@ -326,35 +325,41 @@
                          x-transition:enter-start="opacity-0 transform -translate-y-4"
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="ml-6 mt-3 space-y-2">
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-lg flex items-center justify-center mr-3">
-                                <i class="fas fa-arrow-up text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
+                        <a href="{{ url('/materiales') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-boxes text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Materiales
                         </a>
-                        <a href="{{ url('/categorias_elementos') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-yellow-400 to-pink-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/categorias_elementos') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-layer-group text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Categorías de Elemento
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-orange-400 to-red-400 rounded-lg flex items-center justify-center mr-3">
-                                <i class="fas fa-arrow-up text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
+                        <a href="{{ url('/tipo_material') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-tags text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
-                            Tipo de Materiales
+                            Tipos de Material
                         </a>
-                        <a href="{{ url('/movimientos') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-violet-400 to-purple-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/movimientos') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-history text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Movimientos
                         </a>
-                        <a href="{{ url('/tipo_movimiento') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-rose-400 to-pink-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/tipo_movimiento') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-history text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Tipo de Movimientos
+                        </a>
+                        <a href="{{ url('/inventario') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-history text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
+                            </div>
+                            Inventario
                         </a>
                     </div>
                 </li>   
@@ -362,8 +367,8 @@
                 <!-- Ubicaciones -->
                 <li>
                     <button @click="submenus.ubicaciones = !submenus.ubicaciones" 
-                            class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-white hover:bg-opacity-10 rounded-2xl transition-all duration-300 group menu-item-hover">
-                        <div class="w-10 h-10 bg-gradient-to-r from-red-400 to-pink-500 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
+                            class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-blue-800 hover:bg-opacity-50 rounded-2xl transition-all duration-300 group menu-item-hover">
+                        <div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-2' : 'mx-auto'">
                             <i class="fas fa-map-marker-alt text-white group-hover:scale-110 transition-transform duration-200"></i>
                         </div>
                         <span x-show="sidebarOpen" x-transition class="font-semibold flex-1 text-left">Ubicaciones</span>
@@ -379,37 +384,37 @@
                          x-transition:enter-start="opacity-0 transform -translate-y-4"
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="ml-6 mt-3 space-y-2">
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/sede') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-building text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Sedes
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/centro') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-home text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Centros
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/municipio') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-city text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Municipios
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                        <a href="{{ url('/areas') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
                             <div class="w-8 h-8 bg-gradient-to-r from-purple-400 to-violet-400 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-map text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Áreas
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                        <a href="{{ url('/sitios') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
                             <div class="w-8 h-8 bg-gradient-to-r from-pink-400 to-rose-400 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-location-dot text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Sitios
                         </a>
-                        <a href="{{ url('/tipos_sitio') }}" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                        <a href="{{ url('/tipos_sitio') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
                             <div class="w-8 h-8 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-tags text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
@@ -421,8 +426,8 @@
                 <!-- Educación -->
                 <li>
                     <button @click="submenus.educacion = !submenus.educacion" 
-                            class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-white hover:bg-opacity-10 rounded-2xl transition-all duration-300 group menu-item-hover">
-                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-400 to-blue-500 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
+                            class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-blue-800 hover:bg-opacity-50 rounded-2xl transition-all duration-300 group menu-item-hover">
+                        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-2' : 'mx-auto'">
                             <i class="fas fa-graduation-cap text-white group-hover:scale-110 transition-transform duration-200"></i>
                         </div>
                         <span x-show="sidebarOpen" x-transition class="font-semibold flex-1 text-left">Educación</span>
@@ -438,14 +443,14 @@
                          x-transition:enter-start="opacity-0 transform -translate-y-4"
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="ml-6 mt-3 space-y-2">
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/fichas') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-file-alt text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Fichas
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
-                            <div class="w-8 h-8 bg-gradient-to-r from-lime-400 to-green-400 rounded-lg flex items-center justify-center mr-3">
+                        <a href="{{ url('/programas') }}" class="flex items-center px-2 py-2 text-blue-100 font-medium hover:bg-white hover:bg-opacity-10 rounded-xl text-sm transition-all duration-300 group">
+                            <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-book text-white text-xs group-hover:scale-110 transition-transform duration-200"></i>
                             </div>
                             Programas
@@ -477,12 +482,6 @@
          @click="sidebarOpen = false"
          class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 md:hidden backdrop-blur-sm"></div>
 
-    <!-- Floating Action Button -->
-    <div class="fixed bottom-8 right-8 z-30">
-        <button class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-3xl transition-all duration-300 hover:scale-110 floating-icon">
-            <i class="fas fa-plus text-xl"></i>
-        </button>
-    </div>
 
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>

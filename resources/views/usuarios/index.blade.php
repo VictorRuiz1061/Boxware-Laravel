@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h2 class="text-2xl font-bold">Usuarios</h2>
+    <h2 class="text-2xl font-bold text-white">Usuarios</h2>
     <a href="{{ route('usuarios.create') }}" class="bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-700 transition">+ Crear Usuario</a>
 </div>
-<div class="bg-white rounded-xl shadow-lg p-6">
+<div class="bg-gray-200 rounded-xl shadow-lg p-6">
     <table class="min-w-full divide-y divide-gray-200">
         <thead>
             <tr>

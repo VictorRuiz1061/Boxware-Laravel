@@ -16,7 +16,7 @@ class Area extends Model
         'fecha_modificacion',
         'sede_id',
     ];
-
+    
     public function sede()
     {
         return $this->belongsTo(Sede::class, 'sede_id', 'id_sede');

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h2 class="text-2xl font-bold">Módulos</h2>
+    <h2 class="text-2xl font-bold text-white">Módulos</h2>
     <a href="{{ route('modulos.create') }}" class="bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-700 transition">+ Crear Módulo</a>
 </div>
 <div class="bg-white rounded-xl shadow-lg p-6">

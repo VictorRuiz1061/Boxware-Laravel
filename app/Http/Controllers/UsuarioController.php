@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
-{
+{ 
     public function index()
     {
         $usuarios = \App\Models\Usuario::with('rol')->get();
