@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('imagen', 255)->nullable();
             $table->string('password');
             $table->string('telefono', 20);
-            $table->timestamp('fecha_registro');
+            $table->timestamp('fecha_registro')->useCurrent();
             $table->boolean('estado');
             $table->string('api_token', 80)->unique()->nullable();
             $table->foreignId('rol_id')->constrained('roles', 'id_rol');
