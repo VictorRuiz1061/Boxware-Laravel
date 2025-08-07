@@ -10,17 +10,14 @@ return new class extends Migration
     {
         Schema::create('movimientos', function (Blueprint $table) {
             $table->id('id_movimiento');
-            $table->boolean('estado');
+            $table->string('estado', 50);
             $table->integer('cantidad');
-            $table->foreignId('material_id')->constrained('materiales', 'id_material');
-            $table->foreignId('tipo_movimiento_id')->constrained('tipos_movimiento', 'id_tipo_movimiento');
-            $table->foreignId('sitio_id')->constrained('sitios', 'id_sitio');
-            $table->foreignId('sitio_origen_id')->constrained('sitios', 'id_sitio')->nullable();
-            $table->foreignId('sitio_destino_id')->constrained('sitios', 'id_sitio')->nullable();
-            $table->foreignId('usuario_movimiento_id')->constrained('usuarios', 'id_usuario');
-            $table->foreignId('usuario_responsable_id')->constrained('usuarios', 'id_usuario');
             $table->timestamp('fecha_creacion')->useCurrent();
             $table->timestamp('fecha_modificacion')->useCurrentOnUpdate()->nullable();
+            $table->foreignId('usuario_id')->constrained('usuarios', 'id_usuario');
+            $table->foreignId('tipo_movimiento_id')->constrained('tipos_movimiento', 'id_tipo_movimiento');
+            $table->foreignId('material_id')->constrained('materiales', 'id_material');
+            $table->foreignId('sitio_id')->constrained('sitios', 'id_sitio');
         });
     }
 

@@ -13,7 +13,6 @@ return new class extends Migration
             $table->integer('stock');
             $table->string('placa_sena');
             $table->string('descripcion');
-            $table->string('material_id');
             $table->foreignId('sitio_id')->constrained('sitios', 'id_sitio');
         });
     }
