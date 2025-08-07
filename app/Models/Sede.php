@@ -12,10 +12,10 @@ class Sede extends Model
     protected $fillable = [
         'nombre_sede',
         'direccion_sede',
-        'estado',
         'fecha_creacion',
         'fecha_modificacion',
-        'centro_id',
+        'centro_id',        
+        'estado',
     ];
 
     public function centro()

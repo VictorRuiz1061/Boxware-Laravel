@@ -13,8 +13,8 @@ class Municipio extends Model
     
     protected $fillable = [
         'nombre_municipio',
-        'estado',
         'fecha_creacion',
-        'fecha_modificacion',
+        'fecha_modificacion',        
+        'estado',
     ];
 }

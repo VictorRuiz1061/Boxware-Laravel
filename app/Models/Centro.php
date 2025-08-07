@@ -15,9 +15,9 @@ class Centro extends Model
 
     protected $fillable = [
         'nombre_centro',
-        'estado',
         'fecha_creacion',
         'fecha_modificacion',
-        'municipio_id',
+        'municipio_id',        
+        'estado',
     ];
 } 
