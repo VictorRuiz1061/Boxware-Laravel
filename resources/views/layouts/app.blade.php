@@ -164,11 +164,15 @@
                     <button @click="userMenuOpen = !userMenuOpen" 
                             class="flex items-center w-full px-3 py-2.5 text-primary-200 hover:text-white rounded-lg transition-all duration-200 group">
                         <div class="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-medium text-xs">VR</span>
+                            @if(session('usuario_id') && session('usuario_imagen') && Storage::disk('public')->exists(session('usuario_imagen')))
+                                <img src="{{ Storage::url(session('usuario_imagen')) }}" alt="{{ session('usuario_nombre') }}" class="w-8 h-8 rounded-lg object-cover">
+                            @else
+                                <span class="text-white font-medium text-xs">{{ session('usuario_nombre') ? substr(session('usuario_nombre'), 0, 2) : 'US' }}</span>
+                            @endif
                         </div>
                         <div class="hidden md:block text-left">
-                            <div class="text-sm font-medium text-white">Victor Ruiz</div>
-                            <div class="text-xs text-primary-300">Administrador</div>
+                            <div class="text-sm font-medium text-white">{{ session('usuario_nombre') ?? 'Usuario' }}</div>
+                            <div class="text-xs text-primary-300">{{ session('usuario_rol') ?? 'Sin rol' }}</div>
                         </div>
                         <i class="fas fa-chevron-down text-primary-300 text-xs group-hover:rotate-180 transition-transform duration-200"></i>
                     </button>
@@ -186,11 +190,15 @@
                         <div class="px-4 py-3 border-b border-primary-700">
                             <div class="flex items-center space-x-3">
                                 <div class="w-10 h-10 bg-accent-600 rounded-lg flex items-center justify-center">
-                                    <span class="text-white font-medium">VR</span>
+                                    @if(session('usuario_id') && session('usuario_imagen') && Storage::disk('public')->exists(session('usuario_imagen')))
+                                        <img src="{{ Storage::url(session('usuario_imagen')) }}" alt="{{ session('usuario_nombre') }}" class="w-10 h-10 rounded-lg object-cover">
+                                    @else
+                                        <span class="text-white font-medium">{{ session('usuario_nombre') ? substr(session('usuario_nombre'), 0, 2) : 'US' }}</span>
+                                    @endif
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium text-white">Victor Ruiz</p>
-                                    <p class="text-xs text-primary-400">victor@boxware.com</p>
+                                    <p class="text-sm font-medium text-white">{{ session('usuario_nombre') ?? 'Usuario' }}</p>
+                                    <p class="text-xs text-primary-400">{{ session('usuario_email') ?? 'email@boxware.com' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -483,5 +491,6 @@
          class="fixed inset-0 bg-primary-900 bg-opacity-75 z-20 md:hidden backdrop-blur-sm"></div>
 
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    @yield('scripts')
 </body>
 </html>

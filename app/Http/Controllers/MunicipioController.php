@@ -28,18 +28,18 @@ class MunicipioController extends Controller
  
     public function store(MunicipioRequest $request)
     {
-        $validated = $request->validated([
-            'nombre_municipio' => 'required',
-            'estado' => 'required',
-        ]);
-        $datos = $request->all();
-        if (!isset($datos['fecha_creacion'])) {
-            $datos['fecha_creacion'] = now();
+        // El método validated() no acepta parámetros, las reglas ya están en MunicipioRequest
+        $validated = $request->validated();
+        
+        // Asegurar que las fechas estén establecidas
+        if (!isset($validated['fecha_creacion'])) {
+            $validated['fecha_creacion'] = now();
         }
-        if (!isset($datos['fecha_modificacion'])) {
-            $datos['fecha_modificacion'] = now();
+        if (!isset($validated['fecha_modificacion'])) {
+            $validated['fecha_modificacion'] = now();
         }
-        $municipio = \App\Models\Municipio::create($datos);
+        
+        $municipio = \App\Models\Municipio::create($validated);
         return redirect()->route('municipios.index')->with('success', 'Municipio creado exitosamente');
     }
 

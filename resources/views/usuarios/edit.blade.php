@@ -33,7 +33,7 @@
 
         <!-- Form Content -->
         <div class="p-8">
-            <form method="POST" action="{{ route('usuarios.update', $usuario->id_usuario) }}" class="space-y-8">
+            <form method="POST" action="{{ route('usuarios.update', $usuario->id_usuario) }}" class="space-y-8" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -252,6 +252,39 @@
                                 </p>
                             @enderror
                         </div>
+
+                        <!-- Campo de imagen -->
+                        <div>
+                            <label class="block text-primary-200 font-semibold mb-3">
+                                <span class="flex items-center">
+                                    <i class="fas fa-image mr-2 text-accent-500"></i>
+                                    Imagen de perfil
+                                </span>
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <label class="flex flex-col items-center px-4 py-3 bg-primary-800 border border-primary-600 text-white rounded-lg cursor-pointer hover:bg-primary-700 transition-colors duration-200">
+                                    <i class="fas fa-cloud-upload-alt text-accent-500 text-xl mb-2"></i>
+                                    <span class="text-sm">Seleccionar imagen</span>
+                                    <input type="file" name="imagen" class="hidden" accept="image/*">
+                                </label>
+                                <span class="text-primary-300 text-sm" id="file-name">{{ $usuario->imagen ? basename($usuario->imagen) : 'Ningún archivo seleccionado' }}</span>
+                            </div>
+                            @if($usuario->imagen)
+                                <div class="mt-4">
+                                    <p class="text-primary-300 text-sm mb-2">Imagen actual:</p>
+                                    <img src="{{ asset('storage/' . $usuario->imagen) }}" alt="Imagen de perfil" class="h-24 w-24 object-cover rounded-lg border border-primary-600">
+                                </div>
+                            @endif
+                            <p class="mt-2 text-primary-300 text-sm flex items-center">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Formatos permitidos: JPG, PNG, GIF. Máximo 2MB.
+                            </p>
+                            @error('imagen')
+                                <p class="mt-2 text-red-400 text-sm flex items-center">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i>{{ $message }}
+                                </p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
@@ -271,3 +304,20 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileNameDisplay = document.getElementById('file-name');
+        
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+            } else {
+                fileNameDisplay.textContent = 'Ningún archivo seleccionado';
+            }
+        });
+    });
+</script>
+@endpush

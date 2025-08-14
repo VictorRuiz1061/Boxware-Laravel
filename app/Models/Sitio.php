@@ -13,7 +13,7 @@ class Sitio extends Model
     protected $fillable = [
         'nombre_sitio',
         'ubicacion',
-        'ficha_tecnica',
+        'fecha_tecnica',
         'estado',
         'fecha_creacion',
         'fecha_modificacion',

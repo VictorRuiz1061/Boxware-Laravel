@@ -39,6 +39,7 @@ class PermisoSeeder extends Seeder
                 'nombre' => 'Permiso global de módulos',
             ],
             [
+                'modulo_id' => $moduloIds[0], // Use the first module ID as the required modulo_id
                 'modulo_ids' => json_encode($moduloIds),
                 'estado' => true,
                 'puede_ver' => true,

@@ -82,10 +82,6 @@
             <thead class="bg-primary-800 bg-opacity-30">
                 <tr>
                     <th class="px-6 py-4 text-left text-xs font-bold text-primary-200 uppercase tracking-wider">
-                        <div class="flex items-center space-x-2">
-                            <span>ID</span>
-                            <i class="fas fa-sort text-primary-400"></i>
-                        </div>
                     </th>
                     <th class="px-6 py-4 text-left text-xs font-bold text-primary-200 uppercase tracking-wider">Usuario</th>
                     <th class="px-6 py-4 text-left text-xs font-bold text-primary-200 uppercase tracking-wider">Contacto</th>
@@ -99,10 +95,15 @@
                     <tr class="hover:bg-primary-800 hover:bg-opacity-30 transition-colors duration-200">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
-                                <div class="w-10 h-10 bg-accent-600 rounded-lg flex items-center justify-center mr-3">
-                                    <span class="text-white font-semibold text-sm">{{ substr($usuario->nombre, 0, 1) }}{{ substr($usuario->apellido, 0, 1) }}</span>
+                                @if($usuario->imagen)
+                                <div class="w-10 h-10 rounded-lg mr-3 overflow-hidden">
+                                    <img src="{{ asset('storage/' . $usuario->imagen) }}" alt="{{ $usuario->nombre }}" class="w-full h-full object-cover">
                                 </div>
-                                <span class="text-white font-medium">#{{ $usuario->id_usuario }}</span>
+                                @else
+                                <div class="w-10 h-10 bg-accent-600 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                @endif
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

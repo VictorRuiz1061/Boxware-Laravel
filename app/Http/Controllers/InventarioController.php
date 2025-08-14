@@ -24,18 +24,10 @@ class InventarioController extends Controller
     public function index()
     {
         try {
-            $inventario = Inventario::with('sitio')->get();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Lista de inventario obtenida correctamente',
-                'data' => $inventario
-            ]);
+            $inventario = Inventario::with(['sitio', 'material'])->get();
+            return view('inventario.index', compact('inventario'));
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al obtener la lista de inventario',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al obtener la lista de inventario: ' . $e->getMessage());
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Material;
 use App\Models\TipoMaterial;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MaterialController extends Controller
 {
@@ -30,7 +31,7 @@ class MaterialController extends Controller
             'producto_peresedero' => 'required|boolean',
             'estado' => 'required|boolean',
             'fecha_vencimiento' => 'required|date',
-            'imagen' => 'required|string',
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tipo_material_id' => 'required|exists:tipo_materiales,id_tipo_material',
         ]);
         
@@ -42,6 +43,16 @@ class MaterialController extends Controller
         
         if (!isset($datos['fecha_modificacion'])) {
             $datos['fecha_modificacion'] = now();
+        }
+        
+        // Manejo de la imagen
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            
+            // Guardar la imagen en storage/app/public/materiales
+            $rutaImagen = $imagen->storeAs('materiales', $nombreImagen, 'public');
+            $datos['imagen'] = $rutaImagen;
         }
         
         Material::create($datos);
@@ -81,12 +92,27 @@ class MaterialController extends Controller
             'producto_peresedero' => 'required|boolean',
             'estado' => 'required|boolean',
             'fecha_vencimiento' => 'required|date',
-            'imagen' => 'required|string',
+            'imagen' => $request->hasFile('imagen') ? 'required|image|mimes:jpeg,png,jpg,gif|max:2048' : 'nullable|string',
             'tipo_material_id' => 'required|exists:tipo_materiales,id_tipo_material',
         ]);
         
         $datos = $request->all();
         $datos['fecha_modificacion'] = now();
+        
+        // Manejo de la imagen
+        if ($request->hasFile('imagen')) {
+            // Eliminar la imagen anterior si existe
+            if ($material->imagen && Storage::disk('public')->exists($material->imagen)) {
+                Storage::disk('public')->delete($material->imagen);
+            }
+            
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            
+            // Guardar la nueva imagen
+            $rutaImagen = $imagen->storeAs('materiales', $nombreImagen, 'public');
+            $datos['imagen'] = $rutaImagen;
+        }
         
         $material->update($datos);
         

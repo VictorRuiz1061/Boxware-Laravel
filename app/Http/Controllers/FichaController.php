@@ -64,24 +64,39 @@ class FichaController extends Controller
         $ficha = Ficha::findOrFail($id);
         return response()->json($ficha);
     }
+    
+    public function edit($id)
+    {
+        try {
+            $ficha = Ficha::findOrFail($id);
+            $usuarios = Usuario::all();
+            $programas = Programa::all();
+            return view('fichas.edit', compact('ficha', 'usuarios', 'programas'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al obtener datos para editar ficha: ' . $e->getMessage());
+        }
+    }
 
     public function update(Request $request, $id)
     {
-        $ficha = Ficha::findOrFail($id);
+        try {
+            $ficha = Ficha::findOrFail($id);
 
-        $validated = $request->validate([
-            'estado' => 'sometimes|boolean',
-            'fecha_creacion' => 'nullable|date',
-            'fecha_modificacion' => 'nullable|date',
-            'usuario_id' => 'sometimes|exists:usuarios,id_usuario',
-            'programa_id' => 'sometimes|exists:programas,id_programa',
-        ]);
+            $validated = $request->validate([
+                'estado' => 'sometimes|boolean',
+                'usuario_id' => 'required|exists:usuarios,id_usuario',
+                'programa_id' => 'required|exists:programas,id_programa',
+            ]);
 
-        $validated['fecha_modificacion'] = now();
+            $validated['fecha_modificacion'] = now();
 
-        $ficha->update($validated);
+            $ficha->update($validated);
 
-        return response()->json($ficha);
+            return redirect()->route('fichas.index')
+                ->with('success', 'Ficha actualizada exitosamente');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al actualizar la ficha: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function destroy($id)

@@ -38,6 +38,12 @@
                 <tr>
                     <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
                         <div class="flex items-center space-x-2">
+                            <i class="fas fa-image text-accent-500"></i>
+                            <span>Imagen</span>
+                        </div>
+                    </th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
+                        <div class="flex items-center space-x-2">
                             <i class="fas fa-barcode text-accent-500"></i>
                             <span>Código SENA</span>
                         </div>
@@ -95,6 +101,19 @@
             <tbody class="divide-y divide-primary-700">
                 @forelse($materiales as $material)
                     <tr class="hover:bg-primary-800 hover:bg-opacity-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap text-white">
+                            <div class="flex items-center justify-center">
+                                @if($material->imagen)
+                                <div class="w-12 h-12 rounded-lg overflow-hidden">
+                                    <img src="{{ asset('storage/' . $material->imagen) }}" alt="{{ $material->nombre_material }}" class="w-full h-full object-cover">
+                                </div>
+                                @else
+                                <div class="w-12 h-12 bg-primary-700 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-box text-primary-400 text-lg"></i>
+                                </div>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-white">
                             <div class="flex items-center">
                                 <i class="fas fa-barcode text-primary-400 mr-2"></i>

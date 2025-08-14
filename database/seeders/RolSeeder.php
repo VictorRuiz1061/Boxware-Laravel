@@ -9,7 +9,8 @@ class RolSeeder extends Seeder
 {
     public function run()
     {
-        Rol::updateOrInsert(
+        // Use create instead of updateOrInsert to ensure all fields are properly set
+        Rol::firstOrCreate(
             ['nombre_rol' => env('SEED_ROLE_ADMIN', 'Super Administrador')],
             [
                 'descripcion' => 'El super usuario',

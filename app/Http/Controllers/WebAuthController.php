@@ -62,6 +62,7 @@ class WebAuthController extends Controller
             'usuario_email' => $usuario->email,
             'usuario_rol' => $usuario->rol ? $usuario->rol->nombre_rol : 'Sin rol',
             'usuario_rol_id' => $usuario->rol_id,
+            'usuario_imagen' => $usuario->imagen,
         ]);
 
         // Si marcó "recordarme", extender la sesión
@@ -134,6 +135,7 @@ class WebAuthController extends Controller
                 'usuario_email' => $usuario->email,
                 'usuario_rol' => $usuario->rol ? $usuario->rol->nombre_rol : 'Sin rol',
                 'usuario_rol_id' => $usuario->rol_id,
+                'usuario_imagen' => $usuario->imagen,
             ]);
             
             // Redireccionar al dashboard con mensaje de éxito
