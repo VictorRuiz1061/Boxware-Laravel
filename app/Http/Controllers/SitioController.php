@@ -41,7 +41,7 @@ class SitioController extends Controller
             $request->validate([
                 'nombre_sitio' => 'required|string|max:255',
                 'ubicacion' => 'required|string|max:255',
-                'fecha_tecnica' => 'required|date',
+                'ficha_tecnica' => 'required|string|max:255',
                 'estado' => 'required|boolean',
                 'tipo_sitio_id' => 'required|exists:tipos_sitio,id_tipo_sitio',
             ]);
@@ -106,7 +106,7 @@ class SitioController extends Controller
             $request->validate([
                 'nombre_sitio' => 'required|string|max:255',
                 'ubicacion' => 'required|string|max:255',
-                'fecha_tecnica' => 'required|date',
+                'ficha_tecnica' => 'required|string|max:255',
                 'estado' => 'required|boolean',
                 'tipo_sitio_id' => 'required|exists:tipos_sitio,id_tipo_sitio',
             ]);

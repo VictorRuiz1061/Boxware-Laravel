@@ -132,15 +132,16 @@
                     <div class="mt-6">
                         <label class="block text-primary-200 font-semibold mb-3">
                             <span class="flex items-center">
-                                <i class="fas fa-file-alt mr-2 text-accent-500"></i>
-                                Fecha Técnica
+                                <i class="fas fa-signature mr-2 text-accent-500"></i>
+                                Fichas Técnicas
                                 <span class="text-red-400 ml-1">*</span>
                             </span>
                         </label>
-                        <input type="date" name="fecha_tecnica" 
-                                  class="w-full bg-primary-800 border border-primary-600 text-white placeholder-primary-400 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors duration-200"
-                                  value="{{ old('fecha_tecnica', $sitio->fecha_tecnica) }}" required>
-                        @error('fecha_tecnica')
+                        <input type="text" name="ficha_tecnica" 
+                                class="w-full bg-primary-800 border border-primary-600 text-white placeholder-primary-400 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors duration-200"
+                                placeholder="Ingresa la ficha técnica del sitio"
+                                value="{{ old('ficha_tecnica', $sitio->ficha_tecnica) }}" required>
+                        @error('ficha_tecnica')
                             <p class="mt-2 text-red-400 text-sm flex items-center">
                                 <i class="fas fa-exclamation-triangle mr-2"></i>{{ $message }}
                             </p>
