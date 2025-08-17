@@ -42,12 +42,12 @@
                             <span>Imagen</span>
                         </div>
                     </th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
+                    <!-- <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
                         <div class="flex items-center space-x-2">
                             <i class="fas fa-barcode text-accent-500"></i>
                             <span>Código SENA</span>
                         </div>
-                    </th>
+                    </th> -->
                     <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
                         <div class="flex items-center space-x-2">
                             <i class="fas fa-tag text-accent-500"></i>
@@ -66,16 +66,22 @@
                             <span>Unidad</span>
                         </div>
                     </th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
+                    <!-- <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
                         <div class="flex items-center space-x-2">
                             <i class="fas fa-apple-alt text-accent-500"></i>
                             <span>Perecedero</span>
                         </div>
-                    </th>
+                    </th> -->
                     <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
                         <div class="flex items-center space-x-2">
                             <i class="fas fa-calendar-alt text-accent-500"></i>
                             <span>Vencimiento</span>
+                        </div>
+                    </th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-layer-group text-accent-500"></i>
+                            <span>categoria</span>
                         </div>
                     </th>
                     <th class="px-6 py-4 text-left text-xs font-bold text-primary-300 uppercase tracking-wider">
@@ -114,12 +120,12 @@
                                 @endif
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-white">
+                        <!-- <td class="px-6 py-4 whitespace-nowrap text-white">
                             <div class="flex items-center">
                                 <i class="fas fa-barcode text-primary-400 mr-2"></i>
                                 <span>{{ $material->codigo_sena }}</span>
                             </div>
-                        </td>
+                        </td> -->
                         <td class="px-6 py-4 whitespace-nowrap text-white">
                             <div class="flex items-center">
                                 <i class="fas fa-box text-primary-400 mr-2"></i>
@@ -138,7 +144,7 @@
                                 <span>{{ $material->unidad_medida }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <!-- <td class="px-6 py-4 whitespace-nowrap">
                             @if($material->producto_peresedero)
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
                                     <i class="fas fa-check-circle mr-1"></i> Sí
@@ -148,7 +154,7 @@
                                     <i class="fas fa-times-circle mr-1"></i> No
                                 </span>
                             @endif
-                        </td>
+                        </td> -->
                         <td class="px-6 py-4 whitespace-nowrap text-white">
                             <div class="flex items-center">
                                 <i class="fas fa-calendar text-primary-400 mr-2"></i>
@@ -158,7 +164,14 @@
                         <td class="px-6 py-4 whitespace-nowrap text-white">
                             <div class="flex items-center">
                                 <i class="fas fa-layer-group text-primary-400 mr-2"></i>
-                                <span>{{ $material->tipoMaterial ? $material->tipoMaterial->nombre_tipo_material : 'Sin tipo' }}</span>
+                                <span>{{ $material->categoriaElemento ? $material->categoriaElemento->nombre_categoria : 'Sin categoría' }}</span>
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-white">
+                            <div class="flex items-center">
+                                <i class="fas fa-layer-group text-primary-400 mr-2"></i>
+                                <span>{{ $material->tipoMaterial ? $material->tipoMaterial->tipo_elemento : 'Sin tipo' }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

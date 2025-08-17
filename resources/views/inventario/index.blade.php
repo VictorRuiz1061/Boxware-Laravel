@@ -49,6 +49,16 @@
 
 <!-- Content Section -->
 <div class="glass-effect rounded-xl border border-primary-700 overflow-hidden">
+    @if(session('success'))
+    <div class="bg-green-500 text-white p-4 rounded-lg mb-6">
+        {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="bg-red-500 text-white p-4 rounded-lg mb-6">
+        {{ session('error') }}
+    </div>
+    @endif
     <!-- Table Header -->
     <div class="bg-primary-800 bg-opacity-50 px-8 py-6 border-b border-primary-700">
         <div class="flex items-center space-x-3">

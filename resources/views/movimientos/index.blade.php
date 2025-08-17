@@ -18,6 +18,16 @@
 
 <!-- Content Section -->
 <div class="glass-effect rounded-xl border border-primary-700 overflow-hidden">
+    @if(session('success'))
+    <div class="bg-green-500 text-white p-4 rounded-lg mb-6">
+        {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="bg-red-500 text-white p-4 rounded-lg mb-6">
+        {{ session('error') }}
+    </div>
+    @endif
     <!-- Table Header -->
     <div class="bg-primary-800 bg-opacity-50 px-8 py-6 border-b border-primary-700">
         <div class="flex items-center space-x-3">
@@ -40,8 +50,9 @@
                         <th class="pb-4 font-semibold">ID</th>
                         <th class="pb-4 font-semibold">Tipo</th>
                         <th class="pb-4 font-semibold">Material</th>
-                        <th class="pb-4 font-semibold">Sitio</th>
                         <th class="pb-4 font-semibold">Cantidad</th>
+                        <th class="pb-4 font-semibold">Sitio Origen</th>
+                        <th class="pb-4 font-semibold">Sitio Destino</th>
                         <th class="pb-4 font-semibold">Usuario</th>
                         <th class="pb-4 font-semibold">Fecha</th>
                         <th class="pb-4 font-semibold">Estado</th>
@@ -68,8 +79,21 @@
                                 </span>
                             </td>
                             <td class="py-4 text-white">{{ $movimiento->material->nombre_material ?? 'N/A' }}</td>
-                            <td class="py-4 text-white">{{ $movimiento->sitio->nombre_sitio ?? 'N/A' }}</td>
                             <td class="py-4 text-white">{{ $movimiento->cantidad }}</td>
+                            <td class="py-4 text-white">
+                                @if(in_array(strtolower($movimiento->tipoMovimiento->tipo_movimiento), ['traslado', 'prestamo', 'préstamo', 'devolucion', 'devolución']))
+                                    {{ $movimiento->sitioOrigen->nombre_sitio ?? 'N/A' }}
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                            <td class="py-4 text-white">
+                                @if(in_array(strtolower($movimiento->tipoMovimiento->tipo_movimiento), ['traslado', 'prestamo', 'préstamo', 'devolucion', 'devolución']))
+                                    {{ $movimiento->sitioDestino->nombre_sitio ?? 'N/A' }}
+                                @else
+                                    {{ $movimiento->sitio->nombre_sitio ?? 'N/A' }}
+                                @endif
+                            </td>
                             <td class="py-4 text-white">{{ $movimiento->usuarioMovimiento->nombre ?? 'N/A' }}</td>
                             <td class="py-4 text-white">{{ date('d/m/Y', strtotime($movimiento->fecha_creacion)) }}</td>
                             <td class="py-4">
@@ -88,7 +112,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="py-6 text-center text-primary-300">
+                            <td colspan="10" class="py-6 text-center text-primary-300">
                                 <div class="flex flex-col items-center justify-center space-y-4">
                                     <div class="w-16 h-16 bg-primary-800 rounded-full flex items-center justify-center">
                                         <i class="fas fa-exchange-alt text-primary-600 text-2xl"></i>

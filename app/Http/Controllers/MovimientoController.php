@@ -53,7 +53,7 @@ class MovimientoController extends Controller
                 'usuario_movimiento_id' => 'required|exists:usuarios,id_usuario',
             ];
             
-            // Obtener el tipo de movimiento
+            // Obtener el tipo de movimiento para reglas específicas
             $tipoMovimiento = TipoMovimiento::find($request->tipo_movimiento_id);
             if (!$tipoMovimiento) {
                 return back()->with('error', 'Tipo de movimiento no válido')->withInput();
@@ -67,15 +67,10 @@ class MovimientoController extends Controller
                 case 'traslado':
                 case 'devolucion':
                 case 'devolución':
-                    // Validar los campos de origen y destino que vienen del formulario
-                    // (no se guardarán directamente en la BD)
-                    $request->validate([
+                    $specificRules = [
                         'sitio_origen_id' => 'required|exists:sitios,id_sitio',
                         'sitio_destino_id' => 'required|exists:sitios,id_sitio',
-                    ]);
-                    // No requerimos sitio_id aquí porque el campo está oculto en el formulario.
-                    // Más adelante asignamos sitio_id = sitio_origen_id antes de guardar.
-                    $specificRules = [];
+                    ];
                     break;
                 default:
                     $specificRules = [
@@ -86,103 +81,48 @@ class MovimientoController extends Controller
             
             // Combinar reglas y validar
             $rules = array_merge($baseRules, $specificRules);
-            $validated = $request->validate($rules);
+            $validatedData = $request->validate($rules);
             
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Error de validación:', ['errors' => $e->errors()]);
-            return back()->with('error', 'Error de validación: ' . implode(', ', array_map(function($err) { return $err[0]; }, $e->errors())))->withInput();
-        }
-    
-        try {
-            $tipoMovimiento = TipoMovimiento::find($validated['tipo_movimiento_id']);
-    
-            // Validaciones extra según el tipo de movimiento
-            switch (strtolower($tipoMovimiento->tipo_movimiento)) {
-                case 'salida':
-                    if (!$this->inventarioService->verificarStockDisponible(
-                        $validated['material_id'],
-                        $validated['sitio_id'],
-                        $validated['cantidad']
-                    )) {
-                        return back()->with('error', 'No hay suficiente stock para realizar la salida')->withInput();
-                    }
-                    break;
-    
-                case 'traslado':
-                case 'prestamo':
-                case 'devolucion':
-                    if (empty($validated['sitio_origen_id']) || empty($validated['sitio_destino_id'])) {
-                        return back()->with('error', 'Debe seleccionar sitio origen y destino')->withInput();
-                    }
-                    break;
-            }
-    
-            // Añadir campos adicionales necesarios
-            $datos = $validated;
-            $datos['estado'] = 1; // Activo por defecto
-            $datos['fecha_creacion'] = now();
-            $datos['fecha_modificacion'] = now();
-            $datos['usuario_id'] = $request->input('usuario_movimiento_id'); // Usuario que realiza el movimiento
-            
-            // Manejar los campos de sitio según el tipo de movimiento
+            // Preparar los datos para el servicio
+            $datosMovimiento = [
+                'tipo_movimiento_id' => $validatedData['tipo_movimiento_id'],
+                'material_id' => $validatedData['material_id'],
+                'cantidad' => $validatedData['cantidad'],
+                'usuario_id' => $validatedData['usuario_movimiento_id'], // Asignar a usuario_id para el modelo Movimiento
+                'estado' => 1, // Activo por defecto
+                'fecha_creacion' => now(),
+                'fecha_modificacion' => now(),
+            ];
+
+            // Asignar sitios según el tipo de movimiento
             switch (strtolower($tipoMovimiento->tipo_movimiento)) {
                 case 'prestamo':
                 case 'préstamo':
                 case 'traslado':
                 case 'devolucion':
                 case 'devolución':
-                    // Para estos tipos, usamos el sitio_id del formulario
-                    // pero guardamos los valores de origen y destino para procesamiento
-                    $datos['sitio_id'] = $request->input('sitio_origen_id');
-                    
-                    // Guardar temporalmente estos valores para el servicio
-                    $sitioOrigenId = $request->input('sitio_origen_id');
-                    $sitioDestinoId = $request->input('sitio_destino_id');
+                    $datosMovimiento['sitio_origen_id'] = $validatedData['sitio_origen_id'];
+                    $datosMovimiento['sitio_destino_id'] = $validatedData['sitio_destino_id'];
+                    // Para estos tipos, el sitio_id principal del movimiento es el de origen
+                    $datosMovimiento['sitio_id'] = $validatedData['sitio_origen_id'];
                     break;
                 default:
-                    // Para otros tipos, ya tenemos el sitio_id
+                    // Para otros tipos (entrada, salida), el sitio_id es el principal
+                    $datosMovimiento['sitio_id'] = $validatedData['sitio_id'];
                     break;
             }
             
-            // Registrar el movimiento
-            $movimiento = Movimiento::create($datos);
-            
-            // Procesar el movimiento según su tipo
-            switch (strtolower($tipoMovimiento->tipo_movimiento)) {
-                case 'entrada':
-                    $this->inventarioService->procesarEntrada($movimiento);
-                    break;
-                case 'salida':
-                    $this->inventarioService->procesarSalida($movimiento);
-                    break;
-                case 'prestamo':
-                case 'préstamo':
-                    // Asignar temporalmente los valores para el procesamiento
-                    $movimiento->sitio_origen_id = $sitioOrigenId;
-                    $movimiento->sitio_destino_id = $sitioDestinoId;
-                    $this->inventarioService->procesarPrestamo($movimiento);
-                    break;
-                case 'traslado':
-                    // Asignar temporalmente los valores para el procesamiento
-                    $movimiento->sitio_origen_id = $sitioOrigenId;
-                    $movimiento->sitio_destino_id = $sitioDestinoId;
-                    $this->inventarioService->procesarTraslado($movimiento);
-                    break;
-                case 'devolucion':
-                case 'devolución':
-                    // Asignar temporalmente los valores para el procesamiento
-                    $movimiento->sitio_origen_id = $sitioOrigenId;
-                    $movimiento->sitio_destino_id = $sitioDestinoId;
-                    $this->inventarioService->procesarDevolucion($movimiento);
-                    break;
-                default:
-                    throw new Exception('Tipo de movimiento no soportado');
-            }
+            // Registrar el movimiento a través del servicio
+            $this->inventarioService->registrarMovimiento($datosMovimiento);
     
             return redirect()->route('movimientos.index')
                 ->with('success', 'Movimiento registrado con éxito');
     
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Error de validación:', ['errors' => $e->errors()]);
+            return back()->with('error', 'Error de validación: ' . implode(', ', array_map(function($err) { return $err[0]; }, $e->errors())))->withInput();
         } catch (Exception $e) {
+            \Log::error('Error al registrar el movimiento:', ['error' => $e->getMessage()]);
             return back()->with('error', 'Error al registrar el movimiento: ' . $e->getMessage())->withInput();
         }
     }

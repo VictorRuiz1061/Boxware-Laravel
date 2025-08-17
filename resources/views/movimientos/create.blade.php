@@ -35,6 +35,11 @@
         <div class="p-8">
             <form method="POST" action="{{ route('movimientos.store') }}" class="space-y-8" id="movimientoForm">
                 @csrf
+                @if(session('success'))
+                <div class="bg-green-500 text-white p-4 rounded-lg mb-6">
+                    {{ session('success') }}
+                </div>
+                @endif
                 @if(session('error'))
                 <div class="bg-red-500 text-white p-4 rounded-lg mb-6">
                     {{ session('error') }}

@@ -95,12 +95,10 @@ class AreaController extends Controller
         try {
             // Buscar el área por ID
             $area = \App\Models\Area::findOrFail($id);
-            $area->validate(
+            $request->validate(
                 [
                     'nombre_area' => 'required|string|max:255',
                     'estado' => 'required|boolean',
-                    'fecha_creacion' => 'required|date',
-                    'fecha_modificacion' => 'required|date',
                     'sede_id' => 'required|exists:sedes,id_sede',
                 ]
             );
@@ -118,16 +116,10 @@ class AreaController extends Controller
             $area->load('sede');
             
             // Devolver mensaje de éxito junto con los datos actualizados
-            return response()->json([
-                'message' => 'Área actualizada exitosamente',
-                'area' => $area
-            ]);
+            return redirect()->route('areas.index')->with('success', 'Área actualizada exitosamente');
         } catch (\Exception $e) {
             // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al actualizar el área',
-                'error' => $e->getMessage()
-            ], 500);
+            return redirect()->back()->with('error', 'Error al actualizar el área: ' . $e->getMessage());
         }
     }
 

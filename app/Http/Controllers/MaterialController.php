@@ -18,7 +18,8 @@ class MaterialController extends Controller
     public function create()
     {
         $tiposMaterial = TipoMaterial::all();
-        return view('materiales.create', compact('tiposMaterial'));
+        $categoriasElementos = \App\Models\CategoriaElemento::all();
+        return view('materiales.create', compact('tiposMaterial', 'categoriasElementos'));
     }
 
     public function store(Request $request)
@@ -33,6 +34,7 @@ class MaterialController extends Controller
             'fecha_vencimiento' => 'required|date',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tipo_material_id' => 'required|exists:tipo_materiales,id_tipo_material',
+            'categoria_elemento_id' => 'required|exists:categorias_elementos,id_categoria_elemento',
         ]);
         
         $datos = $request->all();
@@ -77,7 +79,8 @@ class MaterialController extends Controller
     {
         $material = Material::findOrFail($id);
         $tiposMaterial = TipoMaterial::all();
-        return view('materiales.edit', compact('material', 'tiposMaterial'));
+        $categoriasElementos = \App\Models\CategoriaElemento::all();
+        return view('materiales.edit', compact('material', 'tiposMaterial', 'categoriasElementos'));
     }
 
     public function update(Request $request, $id)
@@ -94,6 +97,7 @@ class MaterialController extends Controller
             'fecha_vencimiento' => 'required|date',
             'imagen' => $request->hasFile('imagen') ? 'required|image|mimes:jpeg,png,jpg,gif|max:2048' : 'nullable|string',
             'tipo_material_id' => 'required|exists:tipo_materiales,id_tipo_material',
+            'categoria_elemento_id' => 'required|exists:categorias_elementos,id_categoria_elemento',
         ]);
         
         $datos = $request->all();

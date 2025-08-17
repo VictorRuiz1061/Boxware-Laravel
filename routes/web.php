@@ -38,6 +38,10 @@ Route::middleware(['web.auth'])->group(function () {
     
     // Municipios
     Route::resource('municipios', MunicipioController::class)->except(['show']);
+
+    // Perfil de usuario
+    Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('usuarios.perfil');
+    Route::put('/perfil', [UsuarioController::class, 'actualizarPerfil'])->name('usuarios.perfil.actualizar');
 });
 
 // Usuarios

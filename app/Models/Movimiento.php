@@ -23,6 +23,11 @@ class Movimiento extends Model
         'fecha_modificacion',
     ];
 
+    protected $casts = [
+        'fecha_creacion' => 'datetime',
+        'fecha_modificacion' => 'datetime',
+    ];
+
     public function tipoMovimiento()
     {
         return $this->belongsTo(TipoMovimiento::class, 'tipo_movimiento_id', 'id_tipo_movimiento');

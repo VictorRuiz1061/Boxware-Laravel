@@ -127,6 +127,7 @@
             margin: 0.5rem 0;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-primary-900 min-h-screen" x-data="{ sidebarOpen: true, mobileMenuOpen: false, submenus: { ubicaciones: false, educacion: false } }">
     <!-- Header -->
@@ -203,14 +204,11 @@
                             </div>
                         </div>
                         <div class="py-1">
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-primary-200 hover:bg-primary-700 transition-colors duration-200 group">
+                            <a href="{{ route('usuarios.perfil') }}" class="flex items-center px-4 py-2 text-sm text-primary-200 hover:bg-primary-700 transition-colors duration-200 group">
                                 <i class="fas fa-user mr-3 text-accent-500 text-xs"></i>Mi Perfil
                             </a>
                             <a href="#" class="flex items-center px-4 py-2 text-sm text-primary-200 hover:bg-primary-700 transition-colors duration-200 group">
-                                <i class="fas fa-cog mr-3 text-accent-500 text-xs"></i>Configuración
-                            </a>
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-primary-200 hover:bg-primary-700 transition-colors duration-200 group">
-                                <i class="fas fa-question-circle mr-3 text-accent-500 text-xs"></i>Ayuda
+                                <i class="fas fa-question-circle mr-3 text-accent-500 text-xs"></i>Notificaciones
                             </a>
                         </div>
                         <div class="border-t border-primary-700 pt-1">
@@ -405,7 +403,7 @@
                             </div>
                             Centros
                         </a>
-                        <a href="{{ url('/municipio') }}" class="flex items-center px-3 py-2 text-primary-300 hover:text-white rounded-md text-sm transition-all duration-200 submenu-item-hover">
+                        <a href="{{ url('/municipios') }}" class="flex items-center px-3 py-2 text-primary-300 hover:text-white rounded-md text-sm transition-all duration-200 submenu-item-hover">
                             <div class="w-6 h-6 bg-primary-600 rounded-md flex items-center justify-center mr-3 group-hover:bg-accent-600 transition-colors duration-200">
                                 <i class="fas fa-city text-xs"></i>
                             </div>

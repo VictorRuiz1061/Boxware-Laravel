@@ -98,12 +98,10 @@ class ProgramaController extends Controller
     {
         try {
             $programa->load('area.sede');
-            return response()->json($programa);
+            $areas = Area::all();
+            return view('programas.edit', compact('programa', 'areas'));
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Programa no encontrado',
-                'error' => $e->getMessage()
-            ], 404);
+            return back()->with('error', 'Error al cargar el programa para edición: ' . $e->getMessage());
         }
     }
 
@@ -132,20 +130,11 @@ class ProgramaController extends Controller
             // Actualizar el programa
             $programa->update($datos);
             
-            // Cargar la relación de área y sede
-            $programa->load('area.sede');
-            
-            // Devolver mensaje de éxito junto con los datos actualizados
-            return response()->json([
-                'message' => 'Programa actualizado exitosamente',
-                'programa' => $programa
-            ]);
+            // Redireccionar con mensaje de éxito
+            return redirect()->route('programas.index')->with('success', 'Programa actualizado exitosamente');
         } catch (\Exception $e) {
-            // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al actualizar el programa',
-                'error' => $e->getMessage()
-            ], 500);
+            // Redireccionar con mensaje de error
+            return back()->with('error', 'Error al actualizar el programa: ' . $e->getMessage())->withInput();
         }
     }
 

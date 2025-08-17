@@ -18,6 +18,8 @@ return new class extends Migration
             $table->boolean('estado');
             $table->date('fecha_vencimiento');
             $table->string('imagen');
+            $table->foreignId('tipo_material_id')->constrained('tipo_materiales', 'id_tipo_material');
+            $table->foreignId('categoria_elemento_id')->constrained('categorias_elementos', 'id_categoria_elemento');
             $table->timestamp('fecha_creacion')->useCurrent();
             $table->timestamp('fecha_modificacion')->useCurrentOnUpdate()->nullable();
         });

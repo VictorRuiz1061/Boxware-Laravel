@@ -198,6 +198,30 @@
                             <label class="block text-primary-200 font-semibold mb-3">
                                 <span class="flex items-center">
                                     <i class="fas fa-user-shield mr-2 text-accent-500"></i>
+                                    Categoría Elemento
+                                    <span class="text-red-400 ml-1">*</span>
+                                </span>
+                            </label>
+                            <select name="categoria_elemento_id" 
+                                    class="w-full bg-primary-800 border border-primary-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors duration-200" required>
+                                <option value="" class="bg-primary-800">Selecciona una categoría</option>
+                                @foreach($categoriasElementos as $categoria)
+                                    <option value="{{ $categoria->id_categoria_elemento }}" class="bg-primary-800" {{ old('categoria_elemento_id') == $categoria->id_categoria_elemento ? 'selected' : '' }}>
+                                        {{ $categoria->nombre_categoria }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('categoria_elemento_id')
+                                <p class="mt-2 text-red-400 text-sm flex items-center">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i>{{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                        
+                        <div>
+                            <label class="block text-primary-200 font-semibold mb-3">
+                                <span class="flex items-center">
+                                    <i class="fas fa-user-shield mr-2 text-accent-500"></i>
                                     Tipo de Material
                                 </span>
                             </label>

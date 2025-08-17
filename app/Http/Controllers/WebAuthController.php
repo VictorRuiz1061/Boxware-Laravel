@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use App\Models\Rol;
+use App\Models\Movimiento;
+use App\Models\Material;
+use App\Models\Inventario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -164,20 +167,59 @@ class WebAuthController extends Controller
 
     public function dashboard()
     {
-        // Verificar si el usuario está autenticado
         if (!session()->has('usuario_id')) {
-            return redirect()->route('login')
-                ->with('error', 'Debes iniciar sesión para acceder al dashboard.');
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión para acceder al dashboard.');
         }
 
         $usuario = Usuario::find(session('usuario_id'));
         
         if (!$usuario) {
             session()->flush();
-            return redirect()->route('login')
-                ->with('error', 'Usuario no encontrado.');
+            return redirect()->route('login')->with('error', 'Usuario no encontrado.');
         }
 
-        return view('dashboard', compact('usuario'));
+        // Datos para las tarjetas
+        $totalUsuarios = Usuario::count();
+        $totalMateriales = Material::count();
+        $totalMovimientos = Movimiento::count();
+
+        // Movimientos recientes
+        $movimientosRecientes = Movimiento::with(['material', 'sitioOrigen', 'sitioDestino', 'tipoMovimiento'])->latest('fecha_creacion')->take(5)->get();
+
+        // Datos para el gráfico de movimientos de los últimos 7 días
+        $movimientosPorDia = Movimiento::select(
+            DB::raw('DATE(fecha_creacion) as fecha'),
+            DB::raw('count(*) as total')
+        )
+        ->where('fecha_creacion', '>=', now()->subDays(7))
+        ->groupBy('fecha')
+        ->orderBy('fecha', 'asc')
+        ->get();
+
+        $fechas = $movimientosPorDia->pluck('fecha');
+        $totales = $movimientosPorDia->pluck('total');
+
+        // Datos para el gráfico de stock por sitio
+        $stockPorSitio = Inventario::with('sitio')
+            ->select('sitio_id', DB::raw('SUM(stock) as total_stock'))
+            ->groupBy('sitio_id')
+            ->get();
+
+        $nombresSitios = $stockPorSitio->map(function ($item) {
+            return $item->sitio->nombre_sitio;
+        });
+        $stocks = $stockPorSitio->pluck('total_stock');
+
+        return view('dashboard', compact(
+            'usuario',
+            'totalUsuarios',
+            'totalMateriales',
+            'totalMovimientos',
+            'movimientosRecientes',
+            'fechas',
+            'totales',
+            'nombresSitios',
+            'stocks'
+        ));
     }
 }
