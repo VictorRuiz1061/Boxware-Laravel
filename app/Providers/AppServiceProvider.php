@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use App\Http\View\Composers\ModuleComposer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Registrar el View Composer para los módulos autorizados
+        View::composer('*', ModuleComposer::class);
+        
         // 1. Solo letras (incluye tildes) y espacios
         Validator::extend(
             'alpha_space',

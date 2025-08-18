@@ -3,6 +3,7 @@
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUserAuth;
 use App\Http\Middleware\WebAuth;
+use App\Http\Middleware\CheckPermiso;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'IsAdmin' => IsAdmin::class,
             'IsUserAuth' => IsUserAuth::class,
             'web.auth' => WebAuth::class,
+            'check.permiso' => CheckPermiso::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -252,12 +252,63 @@
                         <div class="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
                             <i class="fas fa-tachometer-alt text-white group-hover:scale-110 transition-transform duration-200"></i>
                         </div>
-                        <span x-show="sidebarOpen" x-transition class="font-semibold">Inicio</span>
-                        <div x-show="!sidebarOpen" class="absolute left-20 glass-effect text-white px-3 py-2 rounded-xl text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50">
-                            Inicio
-                        </div>
+                        <span x-show="sidebarOpen" class="text-white group-hover:text-yellow-100 transition-colors duration-200">
+                            Dashboard
+                        </span>
                     </a>
                 </li>
+
+                <!-- Módulos dinámicos -->
+                @forelse($authorizedModules as $module)
+                    <li>
+                        @if(count($module->submodules) > 0)
+                            <!-- Módulo con submódulos -->
+                            <button @click="activeSubmenu = activeSubmenu === 'module-{{ $module->id_modulo }}' ? null : 'module-{{ $module->id_modulo }}'" 
+                                    class="flex items-center w-full px-4 py-4 text-white font-semibold hover:bg-white hover:bg-opacity-10 rounded-2xl transition-all duration-300 group menu-item-hover">
+                                <div class="w-10 h-10 bg-gradient-to-r from-{{ $module->color }}-400 to-{{ $module->color }}-600 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
+                                    <i class="fas fa-{{ $module->icono }} text-white group-hover:scale-110 transition-transform duration-200"></i>
+                                </div>
+                                <span x-show="sidebarOpen" class="text-left flex-1 flex items-center justify-between">
+                                    <span class="text-{{ $module->color }}-100 transition-colors duration-200">
+                                        {{ $module->nombre }}
+                                    </span>
+                                    <i class="fas fa-chevron-down text-xs ml-2 transform transition-transform duration-200" 
+                                       :class="{'rotate-180': activeSubmenu === 'module-{{ $module->id_modulo }}'}"></i>
+                                </span>
+                            </button>
+
+                            <!-- Submenú de módulos -->
+                            <div x-show="sidebarOpen && activeSubmenu === 'module-{{ $module->id_modulo }}'" 
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform -translate-y-4"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                                 class="ml-6 mt-3 space-y-2">
+                                @foreach($module->submodules as $submodule)
+                                    <a href="{{ route($submodule->ruta) }}" 
+                                       class="block px-4 py-2 text-sm text-gray-200 hover:bg-white hover:bg-opacity-10 rounded-xl transition-colors duration-200 flex items-center">
+                                        <i class="fas fa-{{ $submodule->icono }} text-xs mr-3 w-4 text-center"></i>
+                                        <span>{{ $submodule->nombre }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @else
+                            <!-- Módulo simple -->
+                            <a href="{{ route($module->ruta) }}" 
+                               class="flex items-center px-4 py-4 text-white font-semibold hover:bg-white hover:bg-opacity-10 rounded-2xl transition-all duration-300 group menu-item-hover">
+                                <div class="w-10 h-10 bg-gradient-to-r from-{{ $module->color }}-400 to-{{ $module->color }}-600 rounded-xl flex items-center justify-center" :class="sidebarOpen ? 'mr-4' : 'mx-auto'">
+                                    <i class="fas fa-{{ $module->icono }} text-white group-hover:scale-110 transition-transform duration-200"></i>
+                                </div>
+                                <span x-show="sidebarOpen" class="text-{{ $module->color }}-100 transition-colors duration-200">
+                                    {{ $module->nombre }}
+                                </span>
+                            </a>
+                        @endif
+                    </li>
+                @empty
+                    <li class="px-4 py-2 text-sm text-gray-300">
+                        No hay módulos disponibles
+                    </li>
+                @endforelse
 
                 <!-- Administración -->
                 <li>

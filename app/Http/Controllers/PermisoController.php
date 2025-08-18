@@ -32,16 +32,31 @@ class PermisoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre' => 'required',
+            'nombre' => 'required|string|max:255',
             'estado' => 'required|boolean',
             'puede_ver' => 'required|boolean',
             'puede_crear' => 'required|boolean',
             'puede_editar' => 'required|boolean',
-            'modulo_id' => 'required|exists:modulos,id_modulo',
+            'modulo_id' => 'required|array',
+            'modulo_id.*' => 'exists:modulos,id_modulo',
             'rol_id' => 'required|exists:roles,id_rol',
         ]);
-        \App\Models\Permiso::create($validated);
-        return redirect()->route('permisos.index')->with('success', 'Permiso creado exitosamente');
+
+        // Crear un permiso para cada módulo seleccionado
+        foreach ($validated['modulo_id'] as $moduloId) {
+            \App\Models\Permiso::create([
+                'nombre' => $validated['nombre'],
+                'estado' => $validated['estado'],
+                'puede_ver' => $validated['puede_ver'],
+                'puede_crear' => $validated['puede_crear'],
+                'puede_editar' => $validated['puede_editar'],
+                'puede_eliminar' => false, // Asegurarse de incluir todos los campos necesarios
+                'modulo_id' => $moduloId,
+                'rol_id' => $validated['rol_id'],
+            ]);
+        }
+
+        return redirect()->route('permisos.index')->with('success', 'Permiso(s) creado(s) exitosamente');
     }
 
     /**

@@ -10,26 +10,54 @@ class Modulo extends Model
     public $timestamps = false;
     
     protected $fillable = [
-        'fecha_accion',
         'rutas',
         'descripcion_ruta',
-        'mensaje_cambio',
         'imagen',
         'estado',
-        'fecha_creacion',
         'es_submenu',
-        'modulo_padre_id'
+        'modulo_padre_id',
+        'fecha_accion',
+        'fecha_creacion'
     ];
+    
+    // Accesor para mantener compatibilidad con el código existente
+    public function getNombreAttribute()
+    {
+        return $this->descripcion_ruta;
+    }
+    
+    // Accesor para la ruta
+    public function getRutaAttribute()
+    {
+        return $this->rutas;
+    }
+    
+    // Relación con los permisos
+    public function permisos()
+    {
+        return $this->hasMany(Permiso::class, 'modulo_id', 'id_modulo');
+    }
     
     // Relación consigo mismo para los submódulos
     public function submodulos()
     {
-        return $this->hasMany(Modulo::class, 'modulo_padre_id', 'id_modulo');
+        return $this->hasMany(Modulo::class, 'modulo_padre_id', 'id_modulo')
+                   ->where('estado', 1)
+                   ->orderBy('fecha_creacion', 'asc');
     }
     
     // Relación con el módulo padre
     public function moduloPadre()
     {
         return $this->belongsTo(Modulo::class, 'modulo_padre_id', 'id_modulo');
+    }
+    
+    // Obtener solo módulos principales (sin padre)
+    public static function modulosPrincipales()
+    {
+        return self::whereNull('modulo_padre_id')
+                  ->where('estado', 1)
+                  ->orderBy('fecha_creacion', 'asc')
+                  ->get();
     }
 }

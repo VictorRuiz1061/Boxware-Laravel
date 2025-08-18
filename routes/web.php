@@ -22,19 +22,36 @@ Route::middleware(['web.auth'])->group(function () {
     Route::get('/dashboard', [WebAuthController::class, 'dashboard'])->name('dashboard');
 });
 
-// Usuarios
-Route::resource('usuarios', UsuarioController::class)->except(['show']);
-// Roles
-Route::resource('roles', RolController::class)->except(['show']);
-// Permisos
-Route::resource('permisos', PermisoController::class)->except(['show']);
-// Módulos
-Route::resource('modulos', ModuloController::class)->except(['show']);
-// Tipos de Movimiento
-Route::resource('tipo_movimiento', App\Http\Controllers\TipoMovimientoController::class)->except(['show']);
-// Movimientos
-Route::resource('movimientos', App\Http\Controllers\MovimientoController::class)->except(['show']);
-// Tipos de Sitio
-Route::resource('tipos_sitio', App\Http\Controllers\TipoSitioController::class)->except(['show']);
-// Categorías de Elemento
-Route::resource('categorias_elementos', App\Http\Controllers\ElementoController::class)->except(['show']);
+// Resource routes with permission middleware
+Route::middleware(['web.auth'])->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [WebAuthController::class, 'dashboard'])->name('dashboard');
+
+    // Helper function to create protected resource routes
+    $protectedResource = function ($name, $controller) {
+        Route::middleware(["check.permiso:{$name},view"])->group(function () use ($name, $controller) {
+            Route::get($name, [$controller, 'index'])->name("{$name}.index");
+        });
+        Route::middleware(["check.permiso:{$name},create"])->group(function () use ($name, $controller) {
+            Route::get("{$name}/create", [$controller, 'create'])->name("{$name}.create");
+            Route::post($name, [$controller, 'store'])->name("{$name}.store");
+        });
+        Route::middleware(["check.permiso:{$name},update"])->group(function () use ($name, $controller) {
+            Route::get("{$name}/{{$name}}/edit", [$controller, 'edit'])->name("{$name}.edit");
+            Route::put("{$name}/{{$name}}", [$controller, 'update'])->name("{$name}.update");
+        });
+        Route::middleware(["check.permiso:{$name},delete"])->group(function () use ($name, $controller) {
+            Route::delete("{$name}/{{$name}}", [$controller, 'destroy'])->name("{$name}.destroy");
+        });
+    };
+
+    // Apply protected routes
+    $protectedResource('usuarios', UsuarioController::class);
+    $protectedResource('roles', RolController::class);
+    $protectedResource('permisos', PermisoController::class);
+    $protectedResource('modulos', ModuloController::class);
+    $protectedResource('tipo_movimiento', 'App\Http\Controllers\TipoMovimientoController');
+    $protectedResource('movimientos', 'App\Http\Controllers\MovimientoController');
+    $protectedResource('tipos_sitio', 'App\Http\Controllers\TipoSitioController');
+    $protectedResource('categorias_elementos', 'App\Http\Controllers\ElementoController');
+});
