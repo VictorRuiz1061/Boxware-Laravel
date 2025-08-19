@@ -21,4 +21,8 @@ class DatabaseSeeder extends Seeder
             PermisoSeeder::class,
         ]);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 88655fc520245c5789f48bb55f029ecb94929977

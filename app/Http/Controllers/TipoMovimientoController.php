@@ -30,18 +30,18 @@ class TipoMovimientoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'tipo_movimiento' => 'required|string|max:100',
-            'estado' => 'required|boolean',
-        ]);
+            $request->validate([
+                'tipo_movimiento' => 'required|string|max:100',
+                'estado' => 'required|boolean',
+            ]);
 
-        $datos = $request->all();
-        if (!isset($datos['fecha_creacion'])) {
-            $datos['fecha_creacion'] = now();
-        }
-        if (!isset($datos['fecha_modificacion'])) {
-            $datos['fecha_modificacion'] = now();
-        }
+            $datos = $request->all();
+            if (!isset($datos['fecha_creacion'])) {
+                $datos['fecha_creacion'] = now();
+            }
+            if (!isset($datos['fecha_modificacion'])) {
+                $datos['fecha_modificacion'] = now();
+            }
         $tipoMovimiento = \App\Models\TipoMovimiento::create($datos);
         return redirect()->route('tipo_movimiento.index')->with('success', 'Tipo de movimiento creado correctamente');
     }
@@ -90,13 +90,13 @@ class TipoMovimientoController extends Controller
     public function update(Request $request, $id)
     {
         $tipoMovimiento = \App\Models\TipoMovimiento::findOrFail($id);
-        $request->validate([
+            $request->validate([
             'tipo_movimiento' => 'required|string|max:100',
             'estado' => 'required|boolean',
-        ]);
-        $datos = $request->all();
-        $datos['fecha_modificacion'] = now();
-        $tipoMovimiento->update($datos);
+            ]);
+            $datos = $request->all();
+            $datos['fecha_modificacion'] = now();
+            $tipoMovimiento->update($datos);
         return redirect()->route('tipo_movimiento.index')->with('success', 'Tipo de movimiento actualizado correctamente');
     }
 

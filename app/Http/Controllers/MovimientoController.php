@@ -3,17 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movimiento;
+use App\Models\Inventario;
+use App\Models\TipoMovimiento;
+use App\Services\InventarioService;
 use Illuminate\Http\Request;
 use Exception;
 
 class MovimientoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $inventarioService;
+
+    public function __construct(InventarioService $inventarioService)
+    {
+        $this->inventarioService = $inventarioService;
+    }
+
     public function index()
     {
-        $movimientos = \App\Models\Movimiento::with(['tipoMovimiento', 'usuario', 'material', 'sitio'])->get();
+        $movimientos = \App\Models\Movimiento::with(['tipoMovimiento', 'usuarioMovimiento', 'material', 'sitio'])->get();
         return view('movimientos.index', compact('movimientos'));
     }
 
@@ -34,44 +41,92 @@ class MovimientoController extends Controller
      */
     public function store(Request $request)
     {
+        // Debugging - guardar todos los datos recibidos
+        \Log::info('Datos recibidos en MovimientoController@store:', $request->all());
+        
         try {
-            $request->validate([
-                'estado' => 'required|string|max:50',
-                'cantidad' => 'required|integer',
-                'usuario_id' => 'required|exists:usuarios,id_usuario',
+            // Validación básica para todos los tipos de movimiento
+            $baseRules = [
                 'tipo_movimiento_id' => 'required|exists:tipos_movimiento,id_tipo_movimiento',
                 'material_id' => 'required|exists:materiales,id_material',
-                'sitio_id' => 'required|exists:sitios,id_sitio',
-            ]);
+                'cantidad' => 'required|integer|min:1',
+                'usuario_movimiento_id' => 'required|exists:usuarios,id_usuario',
+            ];
+            
+            // Obtener el tipo de movimiento para reglas específicas
+            $tipoMovimiento = TipoMovimiento::find($request->tipo_movimiento_id);
+            if (!$tipoMovimiento) {
+                return back()->with('error', 'Tipo de movimiento no válido')->withInput();
+            }
+            
+            // Reglas específicas según el tipo de movimiento
+            $specificRules = [];
+            switch (strtolower($tipoMovimiento->tipo_movimiento)) {
+                case 'prestamo':
+                case 'préstamo':
+                case 'traslado':
+                case 'devolucion':
+                case 'devolución':
+                    $specificRules = [
+                        'sitio_origen_id' => 'required|exists:sitios,id_sitio',
+                        'sitio_destino_id' => 'required|exists:sitios,id_sitio',
+                    ];
+                    break;
+                default:
+                    $specificRules = [
+                        'sitio_id' => 'required|exists:sitios,id_sitio',
+                    ];
+                    break;
+            }
+            
+            // Combinar reglas y validar
+            $rules = array_merge($baseRules, $specificRules);
+            $validatedData = $request->validate($rules);
+            
+            // Preparar los datos para el servicio
+            $datosMovimiento = [
+                'tipo_movimiento_id' => $validatedData['tipo_movimiento_id'],
+                'material_id' => $validatedData['material_id'],
+                'cantidad' => $validatedData['cantidad'],
+                'usuario_id' => $validatedData['usuario_movimiento_id'], // Asignar a usuario_id para el modelo Movimiento
+                'estado' => 1, // Activo por defecto
+                'fecha_creacion' => now(),
+                'fecha_modificacion' => now(),
+            ];
 
-            $datos = $request->all();
-            
-            if (!isset($datos['fecha_creacion'])) {
-                $datos['fecha_creacion'] = now();
+            // Asignar sitios según el tipo de movimiento
+            switch (strtolower($tipoMovimiento->tipo_movimiento)) {
+                case 'prestamo':
+                case 'préstamo':
+                case 'traslado':
+                case 'devolucion':
+                case 'devolución':
+                    $datosMovimiento['sitio_origen_id'] = $validatedData['sitio_origen_id'];
+                    $datosMovimiento['sitio_destino_id'] = $validatedData['sitio_destino_id'];
+                    // Para estos tipos, el sitio_id principal del movimiento es el de origen
+                    $datosMovimiento['sitio_id'] = $validatedData['sitio_origen_id'];
+                    break;
+                default:
+                    // Para otros tipos (entrada, salida), el sitio_id es el principal
+                    $datosMovimiento['sitio_id'] = $validatedData['sitio_id'];
+                    break;
             }
             
-            if (!isset($datos['fecha_modificacion'])) {
-                $datos['fecha_modificacion'] = now();
-            }
-            
-            $movimiento = Movimiento::create($datos);
-            
-            // Cargar las relaciones
-            $movimiento->load(['tipoMovimiento', 'usuario', 'material', 'sitio']);
-            
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Movimiento creado correctamente',
-                'data' => $movimiento
-            ], 201);
+            // Registrar el movimiento a través del servicio
+            $this->inventarioService->registrarMovimiento($datosMovimiento);
+    
+            return redirect()->route('movimientos.index')
+                ->with('success', 'Movimiento registrado con éxito');
+    
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Error de validación:', ['errors' => $e->errors()]);
+            return back()->with('error', 'Error de validación: ' . implode(', ', array_map(function($err) { return $err[0]; }, $e->errors())))->withInput();
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al crear el movimiento',
-                'error' => $e->getMessage()
-            ], 500);
+            \Log::error('Error al registrar el movimiento:', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Error al registrar el movimiento: ' . $e->getMessage())->withInput();
         }
     }
+    
 
     /**
      * Display the specified resource.
@@ -79,7 +134,7 @@ class MovimientoController extends Controller
     public function show($id)
     {
         try {
-            $movimiento = Movimiento::with(['tipoMovimiento', 'usuario', 'material', 'sitio'])->find($id);
+            $movimiento = Movimiento::with(['tipoMovimiento', 'usuarioMovimiento', 'material', 'sitio'])->find($id);
             
             if (!$movimiento) {
                 return response()->json([
@@ -121,43 +176,32 @@ class MovimientoController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $movimiento = Movimiento::find($id);
-            
-            if (!$movimiento) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Movimiento no encontrado'
-                ], 404);
-            }
+            $movimiento = Movimiento::findOrFail($id);
             
             $request->validate([
-                'estado' => 'string|max:50',
-                'cantidad' => 'integer',
-                'usuario_id' => 'exists:usuarios,id_usuario',
-                'tipo_movimiento_id' => 'exists:tipos_movimiento,id_tipo_movimiento',
-                'material_id' => 'exists:materiales,id_material',
-                'sitio_id' => 'exists:sitios,id_sitio',
+                'estado' => 'required|boolean',
+                'cantidad' => 'required|integer|min:1',
+                'sitio_id' => 'required|exists:sitios,id_sitio',
+                'sitio_origen_id' => 'nullable|exists:sitios,id_sitio',
+                'sitio_destino_id' => 'nullable|exists:sitios,id_sitio',
+                'usuario_movimiento_id' => 'required|exists:usuarios,id_usuario',
+                'usuario_responsable_id' => 'required|exists:usuarios,id_usuario',
+                'tipo_movimiento_id' => 'required|exists:tipos_movimiento,id_tipo_movimiento',
+                'material_id' => 'required|exists:materiales,id_material',
             ]);
+            
+            // Nota: La actualización de movimientos existentes no modifica el inventario
+            // ya que podría causar inconsistencias. Para modificar el inventario, se debe
+            // crear un nuevo movimiento de corrección.
             
             $datos = $request->all();
             $datos['fecha_modificacion'] = now();
             
             $movimiento->update($datos);
             
-            // Cargar las relaciones
-            $movimiento->load(['tipoMovimiento', 'usuario', 'material', 'sitio']);
-            
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Movimiento actualizado correctamente',
-                'data' => $movimiento
-            ]);
+            return redirect()->route('movimientos.index')->with('success', 'Movimiento actualizado exitosamente');
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error al actualizar el movimiento',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al actualizar el movimiento: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -167,27 +211,78 @@ class MovimientoController extends Controller
     public function destroy($id)
     {
         try {
-            $movimiento = Movimiento::find($id);
+            // Nota: No se permite eliminar movimientos ya que afectaría la trazabilidad
+            // del inventario. En su lugar, se debe crear un movimiento de corrección.
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No se permite eliminar movimientos para mantener la trazabilidad del inventario. Cree un movimiento de corrección si es necesario.'
+            ], 403);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al procesar la solicitud',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Muestra el historial de movimientos de un material específico
+     */
+    public function historialMaterial($materialId)
+    {
+        try {
+            $historial = $this->inventarioService->obtenerHistorialMaterial($materialId);
+            $material = \App\Models\Material::findOrFail($materialId);
             
-            if (!$movimiento) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Movimiento no encontrado'
-                ], 404);
-            }
+            return view('movimientos.historial', compact('historial', 'material'));
+        } catch (Exception $e) {
+            return back()->with('error', 'Error al obtener el historial: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Muestra el inventario actual de un sitio específico
+     */
+    public function inventarioSitio($sitioId)
+    {
+        try {
+            $inventario = $this->inventarioService->obtenerInventarioSitio($sitioId);
+            $sitio = \App\Models\Sitio::findOrFail($sitioId);
             
-            $movimiento->delete();
+            return view('movimientos.inventario_sitio', compact('inventario', 'sitio'));
+        } catch (Exception $e) {
+            return back()->with('error', 'Error al obtener el inventario: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Verifica si hay stock disponible (útil para llamadas AJAX)
+     */
+    public function verificarStock(Request $request)
+    {
+        try {
+            $request->validate([
+                'material_id' => 'required|exists:materiales,id_material',
+                'sitio_id' => 'required|exists:sitios,id_sitio',
+                'cantidad' => 'required|integer|min:1',
+            ]);
+            
+            $disponible = $this->inventarioService->verificarStockDisponible(
+                $request->material_id,
+                $request->sitio_id,
+                $request->cantidad
+            );
             
             return response()->json([
                 'status' => 'success',
-                'message' => 'Movimiento eliminado correctamente'
+                'disponible' => $disponible
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Error al eliminar el movimiento',
-                'error' => $e->getMessage()
-            ], 500);
+                'message' => $e->getMessage()
+            ], 400);
         }
     }
 }

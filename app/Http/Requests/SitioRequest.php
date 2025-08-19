@@ -16,7 +16,7 @@ class SitioRequest extends FormRequest
         return [
             'nombre_sitio' => 'required|string|max:255',
             'ubicacion' => 'required|string|max:255',
-            'fecha_tecnica' => 'required|date',
+            'ficha_tecnica' => 'required|string|max:255',
             'estado' => 'required|boolean',
             'fecha_creacion' => 'sometimes|date',
             'fecha_modificacion' => 'sometimes|date|nullable',

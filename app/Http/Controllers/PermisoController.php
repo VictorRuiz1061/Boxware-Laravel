@@ -6,7 +6,7 @@ use App\Models\Permiso;
 use Illuminate\Http\Request;
 
 class PermisoController extends Controller
-{
+{ 
     /**
      * Display a listing of the resource.
      */

@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Programa;
 use Illuminate\Http\Request;
-use App\Http\Middleware\IsUserAuth;
+use App\Http\Requests\ProgramaRequest;
+use App\Models\Area;
+use App\Models\Sede;
 
 class ProgramaController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(IsUserAuth::class);
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -20,12 +17,9 @@ class ProgramaController extends Controller
     {
         try {
             $programas = Programa::with('area.sede')->get();
-            return response()->json($programas);
+            return view('programas.index', compact('programas'));
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los programas',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al obtener los programas: ' . $e->getMessage());
         }
     }
 
@@ -34,9 +28,14 @@ class ProgramaController extends Controller
      */
     public function create()
     {
-        //
+        try {
+            $areas = Area::all();
+            $programas = Programa::all();
+            return view('programas.create', compact('areas', 'programas'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al obtener datos para crear ficha: ' . $e->getMessage());
+        }
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -68,17 +67,11 @@ class ProgramaController extends Controller
             // Cargar la relación de área y sede
             $programa->load('area.sede');
             
-            // Devolver mensaje de éxito junto con los datos del programa
-            return response()->json([
-                'message' => 'Programa creado exitosamente',
-                'programa' => $programa
-            ], 201);
+            // Redireccionar con mensaje de éxito
+            return redirect()->route('programas.index')->with('success', 'Programa creado exitosamente');
         } catch (\Exception $e) {
-            // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al crear el programa',
-                'error' => $e->getMessage()
-            ], 500);
+            // Redireccionar con mensaje de error
+            return back()->with('error', 'Error al crear el programa: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -103,7 +96,13 @@ class ProgramaController extends Controller
      */
     public function edit(Programa $programa)
     {
-        //
+        try {
+            $programa->load('area.sede');
+            $areas = Area::all();
+            return view('programas.edit', compact('programa', 'areas'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al cargar el programa para edición: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -131,20 +130,11 @@ class ProgramaController extends Controller
             // Actualizar el programa
             $programa->update($datos);
             
-            // Cargar la relación de área y sede
-            $programa->load('area.sede');
-            
-            // Devolver mensaje de éxito junto con los datos actualizados
-            return response()->json([
-                'message' => 'Programa actualizado exitosamente',
-                'programa' => $programa
-            ]);
+            // Redireccionar con mensaje de éxito
+            return redirect()->route('programas.index')->with('success', 'Programa actualizado exitosamente');
         } catch (\Exception $e) {
-            // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al actualizar el programa',
-                'error' => $e->getMessage()
-            ], 500);
+            // Redireccionar con mensaje de error
+            return back()->with('error', 'Error al actualizar el programa: ' . $e->getMessage())->withInput();
         }
     }
 

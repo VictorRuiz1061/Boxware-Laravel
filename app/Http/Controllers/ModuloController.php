@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Middleware\IsUserAuth;
 
 class ModuloController extends Controller
-{
+{ 
     /**
      * Display a listing of the resource.
      */

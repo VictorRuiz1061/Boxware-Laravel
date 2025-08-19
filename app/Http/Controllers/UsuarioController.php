@@ -6,9 +6,10 @@ use App\Models\Usuario;
 use App\Http\Requests\UsuarioRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UsuarioController extends Controller
-{
+{ 
     public function index()
     {
         $usuarios = \App\Models\Usuario::with('rol')->get();
@@ -33,9 +34,22 @@ class UsuarioController extends Controller
             'telefono' => 'required',
             'rol_id' => 'required|exists:roles,id_rol',
             'estado' => 'required|boolean',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        $validated['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
-        \App\Models\Usuario::create($validated);
+        
+        $validated['password'] = Hash::make($validated['password']);
+        
+        // Manejo de la imagen
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            
+            // Guardar la imagen en storage/app/public/usuarios
+            $rutaImagen = $imagen->storeAs('usuarios', $nombreImagen, 'public');
+            $validated['imagen'] = $rutaImagen;
+        }
+        
+        Usuario::create($validated);
         return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente');
     }
 
@@ -54,7 +68,7 @@ class UsuarioController extends Controller
 
     public function update(Request $request, $id)
     {
-        $usuario = \App\Models\Usuario::findOrFail($id);
+        $usuario = Usuario::findOrFail($id);
         $validated = $request->validate([
             'nombre' => 'required',
             'apellido' => 'required',
@@ -64,10 +78,28 @@ class UsuarioController extends Controller
             'telefono' => 'required',
             'rol_id' => 'required|exists:roles,id_rol',
             'estado' => 'required|boolean',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        
         if ($request->filled('password')) {
-            $validated['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+            $validated['password'] = Hash::make($request->password);
         }
+        
+        // Manejo de la imagen
+        if ($request->hasFile('imagen')) {
+            // Eliminar la imagen anterior si existe
+            if ($usuario->imagen && Storage::disk('public')->exists($usuario->imagen)) {
+                Storage::disk('public')->delete($usuario->imagen);
+            }
+            
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            
+            // Guardar la nueva imagen
+            $rutaImagen = $imagen->storeAs('usuarios', $nombreImagen, 'public');
+            $validated['imagen'] = $rutaImagen;
+        }
+        
         $usuario->update($validated);
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente');
     }
@@ -80,4 +112,50 @@ class UsuarioController extends Controller
             'message' => 'Usuario eliminado exitosamente'
         ], 200);
     }
-} 
+
+    public function perfil()
+    {
+        $usuario = Usuario::findOrFail(session('usuario_id'));
+        return view('usuarios.perfil', compact('usuario'));
+    }
+
+    public function actualizarPerfil(Request $request)
+    {
+        $usuario = Usuario::findOrFail(session('usuario_id'));
+
+        $validated = $request->validate([
+            'nombre' => 'required',
+            'apellido' => 'required',
+            'edad' => 'required|integer|min:0',
+            'cedula' => 'required',
+            'email' => 'required|email|unique:usuarios,email,' . $usuario->id_usuario . ',id_usuario',
+            'telefono' => 'required',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->filled('password')) {
+            $validated['password'] = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('imagen')) {
+            if ($usuario->imagen && Storage::disk('public')->exists($usuario->imagen)) {
+                Storage::disk('public')->delete($usuario->imagen);
+            }
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            $rutaImagen = $imagen->storeAs('usuarios', $nombreImagen, 'public');
+            $validated['imagen'] = $rutaImagen;
+        }
+
+        $usuario->update($validated);
+
+        // Actualizar los datos de la sesión
+        session([
+            'usuario_nombre' => $usuario->nombre,
+            'usuario_email' => $usuario->email,
+            'usuario_imagen' => $usuario->imagen,
+        ]);
+
+        return redirect()->route('usuarios.perfil')->with('success', 'Perfil actualizado exitosamente');
+    }
+}

@@ -22,6 +22,7 @@ class Material extends Model
         'fecha_creacion',
         'fecha_modificacion',
         'tipo_material_id',
+        'categoria_elemento_id',
     ];
 
     public function tipoMaterial()
@@ -34,8 +35,8 @@ class Material extends Model
         return $this->hasMany(Movimiento::class, 'material_id', 'id_material');
     }
     
-    public function caracteristicas()
+    public function categoriaElemento()
     {
-        return $this->hasMany(Caracteristica::class, 'material_id', 'id_material');
+        return $this->belongsTo(CategoriaElemento::class, 'categoria_elemento_id', 'id_categoria_elemento');
     }
 }
