@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sitio;
+use App\Models\TipoSitio;
 use Illuminate\Http\Request;
 use App\Http\Middleware\IsUserAuth;
 
 class SitioController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(IsUserAuth::class);
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -20,12 +16,9 @@ class SitioController extends Controller
     {
         try {
             $sitios = Sitio::with('tipoSitio')->get();
-            return response()->json($sitios);
+            return view('sitios.index', compact('sitios'));
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los sitios',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al obtener los sitios: ' . $e->getMessage());
         }
     }
 
@@ -34,7 +27,8 @@ class SitioController extends Controller
      */
     public function create()
     {
-        //
+        $tiposSitio = TipoSitio::all();
+        return view('sitios.create', compact('tiposSitio'));
     }
 
     /**
@@ -47,7 +41,7 @@ class SitioController extends Controller
             $request->validate([
                 'nombre_sitio' => 'required|string|max:255',
                 'ubicacion' => 'required|string|max:255',
-                'fecha_tecnica' => 'required|date',
+                'ficha_tecnica' => 'required|string|max:255',
                 'estado' => 'required|boolean',
                 'tipo_sitio_id' => 'required|exists:tipos_sitio,id_tipo_sitio',
             ]);
@@ -67,20 +61,13 @@ class SitioController extends Controller
             // Crear el sitio
             $sitio = Sitio::create($datos);
             
-            // Cargar la relación con tipo de sitio
-            $sitio->load('tipoSitio');
-            
-            // Devolver mensaje de éxito junto con los datos del sitio
-            return response()->json([
-                'message' => 'Sitio creado exitosamente',
-                'sitio' => $sitio
-            ], 201);
+            // Redireccionar con mensaje de éxito
+            return redirect()->route('sitios.index')
+                ->with('success', 'Sitio creado exitosamente');
         } catch (\Exception $e) {
-            // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al crear el sitio',
-                'error' => $e->getMessage()
-            ], 500);
+            // Redireccionar con mensaje de error
+            return back()->with('error', 'Error al crear el sitio: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -91,12 +78,9 @@ class SitioController extends Controller
     {
         try {
             $sitio = Sitio::with('tipoSitio')->findOrFail($id);
-            return response()->json($sitio);
+            return view('sitios.show', compact('sitio'));
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Sitio no encontrado',
-                'error' => $e->getMessage()
-            ], 404);
+            return back()->with('error', 'Sitio no encontrado: ' . $e->getMessage());
         }
     }
 
@@ -105,7 +89,8 @@ class SitioController extends Controller
      */
     public function edit(Sitio $sitio)
     {
-        //
+        $tiposSitio = TipoSitio::all();
+        return view('sitios.edit', compact('sitio', 'tiposSitio'));
     }
 
     /**
@@ -121,7 +106,7 @@ class SitioController extends Controller
             $request->validate([
                 'nombre_sitio' => 'required|string|max:255',
                 'ubicacion' => 'required|string|max:255',
-                'fecha_tecnica' => 'required|date',
+                'ficha_tecnica' => 'required|string|max:255',
                 'estado' => 'required|boolean',
                 'tipo_sitio_id' => 'required|exists:tipos_sitio,id_tipo_sitio',
             ]);
@@ -135,20 +120,13 @@ class SitioController extends Controller
             // Actualizar el sitio
             $sitio->update($datos);
             
-            // Cargar la relación con tipo de sitio
-            $sitio->load('tipoSitio');
-            
-            // Devolver mensaje de éxito junto con los datos actualizados
-            return response()->json([
-                'message' => 'Sitio actualizado exitosamente',
-                'sitio' => $sitio
-            ]);
+            // Redireccionar con mensaje de éxito
+            return redirect()->route('sitios.index')
+                ->with('success', 'Sitio actualizado exitosamente');
         } catch (\Exception $e) {
-            // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al actualizar el sitio',
-                'error' => $e->getMessage()
-            ], 500);
+            // Redireccionar con mensaje de error
+            return back()->with('error', 'Error al actualizar el sitio: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -161,23 +139,15 @@ class SitioController extends Controller
             // Buscar el sitio por ID
             $sitio = Sitio::findOrFail($id);
             
-            // Guardar el nombre para incluirlo en la respuesta
-            $nombreSitio = $sitio->nombre_sitio;
-            
             // Eliminar el sitio
             $sitio->delete();
             
-            // Devolver mensaje de éxito
-            return response()->json([
-                'message' => 'Sitio eliminado exitosamente',
-            ], 200);
-            
+            // Redireccionar con mensaje de éxito
+            return redirect()->route('sitios.index')
+                ->with('success', 'Sitio eliminado exitosamente');
         } catch (\Exception $e) {
-            // Devolver error con detalles
-            return response()->json([
-                'message' => 'Error al eliminar el sitio',
-                'error' => $e->getMessage()
-            ], 500);
+            // Redireccionar con mensaje de error
+            return back()->with('error', 'Error al eliminar el sitio: ' . $e->getMessage());
         }
     }
 }

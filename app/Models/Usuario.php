@@ -27,6 +27,7 @@ class Usuario extends Authenticatable
         'estado',
         'rol_id',
         'api_token',
+        'imagen',
     ];
     
     protected $hidden = [

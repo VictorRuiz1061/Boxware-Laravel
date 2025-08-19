@@ -27,18 +27,18 @@ class ElementoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'codigo_qnpsc' => 'required|string|max:255',
-            'nombre_categoria' => 'required|string|max:255',
-            'estado' => 'required|boolean',
-        ]);
-        $datos = $request->all();
-        if (!isset($datos['fecha_creacion'])) {
-            $datos['fecha_creacion'] = now();
-        }
-        if (!isset($datos['fecha_modificacion'])) {
-            $datos['fecha_modificacion'] = now();
-        }
+            $request->validate([
+                'codigo_qnpsc' => 'required|string|max:255',
+                'nombre_categoria' => 'required|string|max:255',
+                'estado' => 'required|boolean',
+            ]);
+            $datos = $request->all();
+            if (!isset($datos['fecha_creacion'])) {
+                $datos['fecha_creacion'] = now();
+            }
+            if (!isset($datos['fecha_modificacion'])) {
+                $datos['fecha_modificacion'] = now();
+            }
         $categoria = \App\Models\CategoriaElemento::create($datos);
         return redirect()->route('categorias_elementos.index')->with('success', 'Categoría de elemento creada exitosamente');
     }
@@ -59,14 +59,14 @@ class ElementoController extends Controller
     public function update(Request $request, $id)
     {
         $categoria = \App\Models\CategoriaElemento::findOrFail($id);
-        $request->validate([
-            'codigo_qnpsc' => 'required|string|max:255',
-            'nombre_categoria' => 'required|string|max:255',
-            'estado' => 'required|boolean',
-        ]);
-        $datos = $request->all();
-        $datos['fecha_modificacion'] = now();
-        $categoria->update($datos);
+            $request->validate([
+                'codigo_qnpsc' => 'required|string|max:255',
+                'nombre_categoria' => 'required|string|max:255',
+                'estado' => 'required|boolean',
+            ]);
+            $datos = $request->all();
+            $datos['fecha_modificacion'] = now();
+            $categoria->update($datos);
         return redirect()->route('categorias_elementos.index')->with('success', 'Categoría de elemento actualizada exitosamente');
     }
 

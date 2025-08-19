@@ -30,17 +30,17 @@ class TipoSitioController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre_tipo_sitio' => 'required|string|max:255',
-            'estado' => 'required|boolean',
-        ]);
-        $datos = $request->all();
-        if (!isset($datos['fecha_creacion'])) {
-            $datos['fecha_creacion'] = now();
-        }
-        if (!isset($datos['fecha_modificacion'])) {
-            $datos['fecha_modificacion'] = now();
-        }
+            $request->validate([
+                'nombre_tipo_sitio' => 'required|string|max:255',
+                'estado' => 'required|boolean',
+            ]);
+            $datos = $request->all();
+            if (!isset($datos['fecha_creacion'])) {
+                $datos['fecha_creacion'] = now();
+            }
+            if (!isset($datos['fecha_modificacion'])) {
+                $datos['fecha_modificacion'] = now();
+            }
         $tipoSitio = \App\Models\TipoSitio::create($datos);
         return redirect()->route('tipos_sitio.index')->with('success', 'Tipo de sitio creado exitosamente');
     }
@@ -76,13 +76,13 @@ class TipoSitioController extends Controller
     public function update(Request $request, $id)
     {
         $tipoSitio = \App\Models\TipoSitio::findOrFail($id);
-        $request->validate([
-            'nombre_tipo_sitio' => 'required|string|max:255',
-            'estado' => 'required|boolean',
-        ]);
-        $datos = $request->all();
-        $datos['fecha_modificacion'] = now();
-        $tipoSitio->update($datos);
+            $request->validate([
+                'nombre_tipo_sitio' => 'required|string|max:255',
+                'estado' => 'required|boolean',
+            ]);
+            $datos = $request->all();
+            $datos['fecha_modificacion'] = now();
+            $tipoSitio->update($datos);
         return redirect()->route('tipos_sitio.index')->with('success', 'Tipo de sitio actualizado exitosamente');
     }
 

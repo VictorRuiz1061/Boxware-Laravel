@@ -20,4 +20,9 @@ class Centro extends Model
         'fecha_modificacion',
         'municipio_id',
     ];
+
+    public function municipio()
+    {
+        return $this->belongsTo(\App\Models\Municipio::class, 'municipio_id', 'id_municipio');
+    }
 } 

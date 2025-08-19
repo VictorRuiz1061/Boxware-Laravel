@@ -7,7 +7,7 @@ use App\Http\Requests\RolRequest;
 use Illuminate\Http\Request;
 
 class RolController extends Controller
-{
+{ 
     public function index()
     {
         $roles = \App\Models\Rol::all();

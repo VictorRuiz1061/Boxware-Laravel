@@ -28,7 +28,6 @@ Route::middleware(['api', IsUserAuth::class])->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout'])
         ->name('auth.logout');
-
     Route::apiResource('categorias-elementos', ElementoController::class);
 
     Route::apiResource('municipios', App\Http\Controllers\MunicipioController::class);
@@ -39,7 +38,7 @@ Route::middleware(['api', IsUserAuth::class])->group(function () {
     Route::apiResource('modulos', App\Http\Controllers\ModuloController::class);
     Route::apiResource('tipo-materiales', App\Http\Controllers\TipoMaterialController::class);
     Route::apiResource('materiales', App\Http\Controllers\MaterialController::class);
-    Route::apiResource('caracteristicas', App\Http\Controllers\CaracteristicaController::class);
+    // Route::apiResource('caracteristicas', App\Http\Controllers\CaracteristicaController::class);
     Route::apiResource('tipos-sitio', App\Http\Controllers\TipoSitioController::class);
     Route::apiResource('sitios', App\Http\Controllers\SitioController::class);
     Route::apiResource('inventarios', App\Http\Controllers\InventarioController::class);

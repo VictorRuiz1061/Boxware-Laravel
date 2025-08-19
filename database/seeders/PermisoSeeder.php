@@ -39,6 +39,10 @@ class PermisoSeeder extends Seeder
                 'nombre' => 'Permiso global de módulos',
             ],
             [
+<<<<<<< HEAD
+=======
+                'modulo_id' => $moduloIds[0], // Use the first module ID as the required modulo_id
+>>>>>>> 88655fc520245c5789f48bb55f029ecb94929977
                 'modulo_ids' => json_encode($moduloIds),
                 'estado' => true,
                 'puede_ver' => true,
@@ -50,4 +54,8 @@ class PermisoSeeder extends Seeder
         );
 
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 88655fc520245c5789f48bb55f029ecb94929977
